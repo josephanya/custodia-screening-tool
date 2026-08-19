@@ -352,8 +352,9 @@ export function QuestionnaireForm() {
           <p className="eyebrow">Diabetes risk triage</p>
           <h1 id="questionnaire-title">Know Your Risk | Diabetes Screening</h1>
           <p className="introLead">
-            Answer a focused set of questions to estimate diabetes risk or diabetes complication risk. Your result can
-            guide next steps and, where appropriate, help a nurse review your screening.
+            Get a clearer picture of your current diabetes risk and identify signs that could point to future
+            complications. Your results will help you understand what to do next, and you can also get a <strong>free
+            nurse review</strong> for personalized guidance.
           </p>
           <p className="introNote">{nonDiagnosticDisclaimer}</p>
 
