@@ -68,22 +68,22 @@ const diagnosedDefaults: Responses = {
 const branchQuestion: Question = {
   id: "diabetesStatus",
   kind: "branch_select",
-  label: "Have you been diagnosed with diabetes?",
-  helper: "This first answer shapes the rest of your screening.",
+  label: "Do you already have diabetes?",
+  helper: "This helps us choose the right questions for you.",
   options: [
-    { label: "I have not / I am not sure", value: "not_diagnosed", helper: "Estimate diabetes risk" },
-    { label: "I have been diagnosed", value: "diagnosed", helper: "Check complication risk" },
+    { label: "No / I'm not sure", value: "not_diagnosed", helper: "Check my diabetes risk" },
+    { label: "Yes, I have diabetes", value: "diagnosed", helper: "Check for possible complications" },
   ],
 };
 
 const notDiagnosedQuestions: Question[] = [
   { id: "age", kind: "number", label: "How old are you?", inputSuffix: "years" },
-  { id: "heightCm", kind: "height_imperial", label: "What is your height?" },
-  { id: "weightKg", kind: "number", label: "What is your weight?", inputSuffix: "kg" },
+  { id: "heightCm", kind: "height_imperial", label: "How tall are you?" },
+  { id: "weightKg", kind: "number", label: "How much do you weigh?", inputSuffix: "kg" },
   {
     id: "sex",
     kind: "single_select",
-    label: "What is your gender?",
+    label: "What is your sex?",
     options: [
       { label: "Male", value: "male" },
       { label: "Female", value: "female" },
@@ -92,8 +92,8 @@ const notDiagnosedQuestions: Question[] = [
   {
     id: "waistCircumferenceCm",
     kind: "single_select",
-    label: "What is your waist circumference?",
-    helper: "An estimate is okay if you know the closest range.",
+    label: "What is your waist size?",
+    helper: "Choose the closest option if you're not sure.",
     options: [
       { label: "I don't know", value: "unknown" },
       { label: "70 cm", value: "70" },
@@ -107,29 +107,29 @@ const notDiagnosedQuestions: Question[] = [
   {
     id: "dailyPhysicalActivity",
     kind: "yes_no",
-    label: "Do you get at least 30 minutes of physical activity daily?",
+    label: "Do you move or exercise for at least 30 minutes most days?",
   },
   {
     id: "dailyFruitOrVegetableIntake",
     kind: "yes_no",
-    label: "Do you eat fruit or vegetables daily?",
+    label: "Do you eat fruit or vegetables every day?",
   },
   {
     id: "historyOfBloodPressureMedication",
     kind: "yes_no",
-    label: "Have you ever taken blood pressure medication?",
+    label: "Have you ever been prescribed medicine for high blood pressure?",
   },
   {
     id: "historyOfHighBloodGlucose",
     kind: "yes_no",
-    label: "Have you ever had high blood glucose?",
+    label: "Have you ever been told your blood sugar was high?",
   },
   {
     id: "familyHistory",
     kind: "single_select",
-    label: "Do you have a family history of diabetes?",
+    label: "Does diabetes run in your family?",
     options: [
-      { label: "No family history", value: "none" },
+      { label: "No", value: "none" },
       { label: "Grandparent, aunt, uncle, or cousin", value: "extended" },
       { label: "Parent, sibling, or child", value: "immediate" },
     ],
@@ -140,47 +140,47 @@ const diagnosedQuestions: Question[] = [
   {
     id: "foot_wound_or_ulcer",
     kind: "yes_no",
-    label: "Do you currently have an unhealed foot wound or ulcer?",
+    label: "Do you have a foot sore or wound that is not healing?",
   },
   {
     id: "sudden_vision_loss_or_blurring",
     kind: "yes_no",
-    label: "Have you had sudden vision loss or blurring?",
+    label: "Have you had sudden vision loss or blurry vision?",
   },
   {
     id: "ketoacidosis_symptoms",
     kind: "yes_no",
-    label: "Do you have nausea, vomiting, rapid breathing, or confusion?",
+    label: "Do you have nausea, vomiting, fast breathing, or confusion?",
   },
   {
     id: "chest_pain_or_shortness_of_breath",
     kind: "yes_no",
-    label: "Do you have chest pain or shortness of breath?",
+    label: "Do you have chest pain or trouble breathing?",
   },
   {
     id: "hba1cControl",
     kind: "single_select",
-    label: "How would you describe your HbA1c control?",
+    label: "Do you know if your average blood sugar, or HbA1c, is in range?",
     options: [
-      { label: "Known and in range", value: "known_good" },
-      { label: "Known and elevated", value: "known_elevated" },
+      { label: "Yes, it is in range", value: "known_good" },
+      { label: "Yes, but it is high", value: "known_elevated" },
       { label: "I don't know", value: "unknown" },
     ],
   },
   {
     id: "glucoseEpisodeFrequency",
     kind: "single_select",
-    label: "How often do you have high or low blood sugar episodes?",
+    label: "How often do you have very high or very low blood sugar?",
     options: [
-      { label: "Rare", value: "rare" },
-      { label: "Monthly", value: "monthly" },
-      { label: "Weekly or more", value: "weekly_or_more" },
+      { label: "Rarely", value: "rare" },
+      { label: "About once a month", value: "monthly" },
+      { label: "Every week or more", value: "weekly_or_more" },
     ],
   },
   {
     id: "diabetesDuration",
     kind: "single_select",
-    label: "How long have you had diabetes?",
+    label: "How long have you been living with diabetes?",
     options: [
       { label: "Under 5 years", value: "under_5_years" },
       { label: "5 to 10 years", value: "5_to_10_years" },
@@ -190,50 +190,50 @@ const diagnosedQuestions: Question[] = [
   {
     id: "bloodPressureControl",
     kind: "single_select",
-    label: "How is your blood pressure controlled?",
+    label: "Is your blood pressure under control?",
     options: [
-      { label: "Controlled", value: "controlled" },
-      { label: "Uncontrolled", value: "uncontrolled" },
+      { label: "Yes", value: "controlled" },
+      { label: "No", value: "uncontrolled" },
       { label: "I don't know", value: "unknown" },
     ],
   },
   {
     id: "smokingStatus",
     kind: "single_select",
-    label: "What is your smoking status?",
+    label: "Do you smoke?",
     options: [
-      { label: "Non-smoker", value: "non_smoker" },
-      { label: "Former smoker", value: "former_smoker" },
-      { label: "Current smoker", value: "current_smoker" },
+      { label: "No", value: "non_smoker" },
+      { label: "I used to smoke", value: "former_smoker" },
+      { label: "Yes, I smoke now", value: "current_smoker" },
     ],
   },
   {
     id: "neuropathySymptoms",
     kind: "yes_no",
-    label: "Do you have numbness, tingling, or loss of sensation?",
+    label: "Do you have numbness, tingling, or reduced feeling in your hands or feet?",
   },
   {
     id: "retinopathySymptoms",
     kind: "yes_no",
-    label: "Do you have blurred vision or night vision issues?",
+    label: "Do you have blurry vision or trouble seeing at night?",
   },
   {
     id: "nephropathySignals",
     kind: "yes_no",
-    label: "Do you have swelling, foamy urine, or unusual fatigue?",
+    label: "Do you have swelling, foamy urine, or unusual tiredness?",
   },
   {
     id: "medicationAdherence",
     kind: "yes_no",
-    label: "Do you take your diabetes meds as prescribed?",
+    label: "Do you take your diabetes medicine as prescribed?",
   },
   {
     id: "lastCheckup",
     kind: "single_select",
     label: "When was your last diabetes checkup?",
     options: [
-      { label: "Within 12 months", value: "within_12_months" },
-      { label: "More than 12 months ago", value: "over_12_months" },
+      { label: "Within the past year", value: "within_12_months" },
+      { label: "More than a year ago", value: "over_12_months" },
     ],
   },
 ];
