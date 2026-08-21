@@ -27,7 +27,7 @@ The public experience is titled **Know Your Risk | Diabetes Screening**. It guid
 
 ### Prerequisites
 
-- Node.js 20 or newer
+- Node.js 22 or newer (required by Prisma 7 and by the glob support the test script uses)
 - npm
 - Docker Desktop or another Docker Compose-compatible runtime
 
