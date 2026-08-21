@@ -1,11 +1,10 @@
 import {
   Classification as PrismaClassification,
+  ClinicalUrgency as PrismaClinicalUrgency,
   DiabetesStatus as PrismaDiabetesStatus,
   ScoringBranch as PrismaScoringBranch,
 } from "@/lib/generated/prisma/client";
-import type { Classification, DiabetesStatus, ScoringBranch } from "@/lib/scoring";
-
-export const assessmentSessionCookieName = "custodia_assessment_session";
+import type { Classification, ClinicalUrgency, DiabetesStatus, ScoringBranch } from "@/lib/scoring";
 
 export function toPrismaDiabetesStatus(diabetesStatus: DiabetesStatus): PrismaDiabetesStatus {
   return diabetesStatus === "diagnosed"
@@ -32,6 +31,17 @@ export function toPrismaClassification(classification: Classification): PrismaCl
   }
 }
 
+export function toPrismaUrgency(urgency: ClinicalUrgency): PrismaClinicalUrgency {
+  switch (urgency) {
+    case "routine":
+      return PrismaClinicalUrgency.ROUTINE;
+    case "urgent":
+      return PrismaClinicalUrgency.URGENT;
+    case "emergency":
+      return PrismaClinicalUrgency.EMERGENCY;
+  }
+}
+
 export function fromPrismaDiabetesStatus(diabetesStatus: PrismaDiabetesStatus): DiabetesStatus {
   return diabetesStatus === PrismaDiabetesStatus.DIAGNOSED ? "diagnosed" : "not_diagnosed";
 }
@@ -50,5 +60,16 @@ export function fromPrismaClassification(classification: PrismaClassification): 
       return "diabetes_low";
     case PrismaClassification.DIABETES_HIGH:
       return "diabetes_high";
+  }
+}
+
+export function fromPrismaUrgency(urgency: PrismaClinicalUrgency): ClinicalUrgency {
+  switch (urgency) {
+    case PrismaClinicalUrgency.ROUTINE:
+      return "routine";
+    case PrismaClinicalUrgency.URGENT:
+      return "urgent";
+    case PrismaClinicalUrgency.EMERGENCY:
+      return "emergency";
   }
 }

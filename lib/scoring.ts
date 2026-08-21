@@ -1,3 +1,14 @@
+import {
+  complicationRiskRules,
+  QUESTIONNAIRE_VERSION,
+  riskOfDiabetesRules,
+  SCORING_ENGINE_VERSION,
+  type BooleanRule,
+  type ChoiceRule,
+  type ClinicalUrgency,
+  type NumericBand,
+} from "./scoring-rules";
+
 export type DiabetesStatus = "diagnosed" | "not_diagnosed";
 
 export type ScoringBranch = "risk_of_diabetes" | "complication_risk";
@@ -30,10 +41,16 @@ export type RedFlagId =
   | "ketoacidosis_symptoms"
   | "chest_pain_or_shortness_of_breath";
 
+export type { ClinicalUrgency };
+
 export type ContributingFactor = {
   id: string;
   label: string;
   points?: number;
+};
+
+export type RedFlagFactor = ContributingFactor & {
+  urgency: Exclude<ClinicalUrgency, "routine">;
 };
 
 export type NotDiagnosedScoringInput = {
@@ -70,24 +87,24 @@ export type ScoringInput = NotDiagnosedScoringInput | DiagnosedScoringInput;
 export type ScoringResult = {
   branch: ScoringBranch;
   ruleVersion: number;
+  questionnaireVersion: string;
+  engineVersion: string;
   classification: Classification;
   score: number | null;
   contributingFactors: ContributingFactor[];
-  redFlags: ContributingFactor[];
+  redFlags: RedFlagFactor[];
+  urgency: ClinicalUrgency;
   urgentCareRecommended: boolean;
 };
 
-export const SCORING_RULE_VERSION = 1;
-
-const BRANCH_A_HIGH_RISK_CUTOFF = 12;
-const BRANCH_B_HIGH_RISK_CUTOFF = 6;
-
-const RED_FLAG_LABELS: Record<RedFlagId, string> = {
-  foot_wound_or_ulcer: "Current unhealed foot wound or ulcer",
-  sudden_vision_loss_or_blurring: "Sudden vision loss or blurring",
-  ketoacidosis_symptoms: "Symptoms suggestive of ketoacidosis",
-  chest_pain_or_shortness_of_breath: "Chest pain or shortness of breath",
+export const scoringRuleVersions: Record<ScoringBranch, number> = {
+  risk_of_diabetes: riskOfDiabetesRules.versionNumber,
+  complication_risk: complicationRiskRules.versionNumber,
 };
+
+export const redFlagIds: RedFlagId[] = Object.keys(
+  complicationRiskRules.redFlags,
+) as RedFlagId[];
 
 export function scoreAssessment(input: ScoringInput): ScoringResult {
   if (input.diabetesStatus === "not_diagnosed") {
@@ -112,143 +129,97 @@ export function calculateBmi(heightCm: number, weightKg: number): number {
 }
 
 function scoreRiskOfDiabetes(input: NotDiagnosedScoringInput): ScoringResult {
+  const rules = riskOfDiabetesRules;
   const bmi = calculateBmi(input.heightCm, input.weightKg);
   const factors: ContributingFactor[] = [
-    ageFactor(input.age),
-    bmiFactor(bmi),
+    bandFactor("age", rules.bands.age, input.age),
+    bandFactor("bmi", rules.bands.bmi, bmi),
     waistCircumferenceFactor(input.sex, input.waistCircumferenceCm),
-    booleanFactor({
-      id: "daily_physical_activity",
-      label: "Less than 30 minutes of daily physical activity",
-      applies: !input.dailyPhysicalActivity,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "daily_fruit_or_vegetable_intake",
-      label: "Fruit or vegetable intake is not daily",
-      applies: !input.dailyFruitOrVegetableIntake,
-      points: 1,
-    }),
-    booleanFactor({
-      id: "blood_pressure_medication",
-      label: "History of blood pressure medication",
-      applies: input.historyOfBloodPressureMedication,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "high_blood_glucose",
-      label: "History of high blood glucose",
-      applies: input.historyOfHighBloodGlucose,
-      points: 5,
-    }),
-    familyHistoryFactor(input.familyHistory),
+    booleanFactor("daily_physical_activity", rules.booleanRules.daily_physical_activity, input.dailyPhysicalActivity),
+    booleanFactor(
+      "daily_fruit_or_vegetable_intake",
+      rules.booleanRules.daily_fruit_or_vegetable_intake,
+      input.dailyFruitOrVegetableIntake,
+    ),
+    booleanFactor(
+      "blood_pressure_medication",
+      rules.booleanRules.blood_pressure_medication,
+      input.historyOfBloodPressureMedication,
+    ),
+    booleanFactor("high_blood_glucose", rules.booleanRules.high_blood_glucose, input.historyOfHighBloodGlucose),
+    choiceFactor("family_history", rules.choiceRules.family_history, input.familyHistory),
   ];
   const score = totalPoints(factors);
+  const isHighRisk = score >= rules.highRiskCutoff;
 
   return {
     branch: "risk_of_diabetes",
-    ruleVersion: SCORING_RULE_VERSION,
-    classification: score >= BRANCH_A_HIGH_RISK_CUTOFF ? "no_diabetes_high" : "no_diabetes_low",
+    ruleVersion: rules.versionNumber,
+    questionnaireVersion: QUESTIONNAIRE_VERSION,
+    engineVersion: SCORING_ENGINE_VERSION,
+    classification: isHighRisk ? rules.classifications.atOrAboveCutoff : rules.classifications.belowCutoff,
     score,
-    contributingFactors: contributingFactors(factors),
+    contributingFactors: applicableFactors(factors),
     redFlags: [],
+    urgency: "routine",
     urgentCareRecommended: false,
   };
 }
 
 function scoreComplicationRisk(input: DiagnosedScoringInput): ScoringResult {
-  const redFlags = Object.entries(input.redFlags)
-    .filter(([, applies]) => applies)
-    .map(([id]) => ({ id, label: RED_FLAG_LABELS[id as RedFlagId] }));
+  const rules = complicationRiskRules;
+  const redFlags = redFlagIds
+    .filter((id) => input.redFlags[id])
+    .map((id) => ({
+      id,
+      label: rules.redFlags[id].label,
+      urgency: rules.redFlags[id].urgency,
+    }));
 
   if (redFlags.length > 0) {
+    const urgency = highestUrgency(redFlags.map((redFlag) => redFlag.urgency));
+
     return {
       branch: "complication_risk",
-      ruleVersion: SCORING_RULE_VERSION,
-      classification: "diabetes_high",
+      ruleVersion: rules.versionNumber,
+      questionnaireVersion: QUESTIONNAIRE_VERSION,
+      engineVersion: SCORING_ENGINE_VERSION,
+      classification: rules.classifications.atOrAboveCutoff,
       score: null,
-      contributingFactors: redFlags,
+      contributingFactors: redFlags.map(({ id, label }) => ({ id, label })),
       redFlags,
-      urgentCareRecommended: input.redFlags.ketoacidosis_symptoms,
+      urgency,
+      urgentCareRecommended: true,
     };
   }
 
   const factors: ContributingFactor[] = [
-    hba1cFactor(input.hba1cControl),
-    glucoseEpisodeFactor(input.glucoseEpisodeFrequency),
-    diabetesDurationFactor(input.diabetesDuration),
-    bloodPressureFactor(input.bloodPressureControl),
-    smokingFactor(input.smokingStatus),
-    booleanFactor({
-      id: "neuropathy_symptoms",
-      label: "Neuropathy symptoms such as numbness, tingling, or sensation loss",
-      applies: input.neuropathySymptoms,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "retinopathy_symptoms",
-      label: "Retinopathy symptoms such as blurred or impaired night vision",
-      applies: input.retinopathySymptoms,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "nephropathy_signals",
-      label: "Nephropathy signals such as swelling, foamy urine, or fatigue",
-      applies: input.nephropathySignals,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "medication_adherence",
-      label: "Difficulty taking medication as prescribed",
-      applies: !input.medicationAdherence,
-      points: 2,
-    }),
-    booleanFactor({
-      id: "last_checkup",
-      label: "Last checkup was more than 12 months ago",
-      applies: input.lastCheckup === "over_12_months",
-      points: 2,
-    }),
+    choiceFactor("hba1c_control", rules.choiceRules.hba1c_control, input.hba1cControl),
+    choiceFactor("glucose_episodes", rules.choiceRules.glucose_episodes, input.glucoseEpisodeFrequency),
+    choiceFactor("diabetes_duration", rules.choiceRules.diabetes_duration, input.diabetesDuration),
+    choiceFactor("blood_pressure_control", rules.choiceRules.blood_pressure_control, input.bloodPressureControl),
+    choiceFactor("smoking_status", rules.choiceRules.smoking_status, input.smokingStatus),
+    booleanFactor("neuropathy_symptoms", rules.booleanRules.neuropathy_symptoms, input.neuropathySymptoms),
+    booleanFactor("retinopathy_symptoms", rules.booleanRules.retinopathy_symptoms, input.retinopathySymptoms),
+    booleanFactor("nephropathy_signals", rules.booleanRules.nephropathy_signals, input.nephropathySignals),
+    booleanFactor("medication_adherence", rules.booleanRules.medication_adherence, input.medicationAdherence),
+    choiceFactor("last_checkup", rules.choiceRules.last_checkup, input.lastCheckup),
   ];
   const score = totalPoints(factors);
+  const isHighRisk = score >= rules.highRiskCutoff;
 
   return {
     branch: "complication_risk",
-    ruleVersion: SCORING_RULE_VERSION,
-    classification: score >= BRANCH_B_HIGH_RISK_CUTOFF ? "diabetes_high" : "diabetes_low",
+    ruleVersion: rules.versionNumber,
+    questionnaireVersion: QUESTIONNAIRE_VERSION,
+    engineVersion: SCORING_ENGINE_VERSION,
+    classification: isHighRisk ? rules.classifications.atOrAboveCutoff : rules.classifications.belowCutoff,
     score,
-    contributingFactors: contributingFactors(factors),
+    contributingFactors: applicableFactors(factors),
     redFlags: [],
+    urgency: "routine",
     urgentCareRecommended: false,
   };
-}
-
-function ageFactor(age: number): ContributingFactor {
-  if (age < 45) {
-    return { id: "age", label: "Age below 45", points: 0 };
-  }
-
-  if (age <= 54) {
-    return { id: "age", label: "Age 45 to 54", points: 2 };
-  }
-
-  if (age <= 64) {
-    return { id: "age", label: "Age 55 to 64", points: 3 };
-  }
-
-  return { id: "age", label: "Age over 64", points: 4 };
-}
-
-function bmiFactor(bmi: number): ContributingFactor {
-  if (bmi < 25) {
-    return { id: "bmi", label: "BMI below 25", points: 0 };
-  }
-
-  if (bmi <= 30) {
-    return { id: "bmi", label: "BMI 25 to 30", points: 1 };
-  }
-
-  return { id: "bmi", label: "BMI over 30", points: 3 };
 }
 
 function waistCircumferenceFactor(
@@ -256,122 +227,65 @@ function waistCircumferenceFactor(
   waistCircumferenceCm: number | "unknown",
 ): ContributingFactor {
   if (waistCircumferenceCm === "unknown") {
-    return { id: "waist_circumference", label: "Waist circumference unknown", points: 0 };
+    const unknownAnswer = riskOfDiabetesRules.unknownAnswers.waist_circumference;
+
+    return { id: "waist_circumference", label: unknownAnswer.label, points: unknownAnswer.points };
   }
 
-  if (sex === "male") {
-    if (waistCircumferenceCm < 94) {
-      return { id: "waist_circumference", label: "Waist circumference below 94 cm", points: 0 };
+  const bands =
+    sex === "male"
+      ? riskOfDiabetesRules.bands.waistCircumferenceMale
+      : riskOfDiabetesRules.bands.waistCircumferenceFemale;
+
+  return bandFactor("waist_circumference", bands, waistCircumferenceCm);
+}
+
+function bandFactor(id: string, bands: readonly NumericBand[], value: number): ContributingFactor {
+  for (const band of bands) {
+    if (band.lt !== undefined) {
+      if (value < band.lt) {
+        return { id, label: band.label, points: band.points };
+      }
+
+      continue;
     }
 
-    if (waistCircumferenceCm <= 102) {
-      return { id: "waist_circumference", label: "Waist circumference 94 to 102 cm", points: 3 };
+    if (band.lte !== undefined) {
+      if (value <= band.lte) {
+        return { id, label: band.label, points: band.points };
+      }
+
+      continue;
     }
 
-    return { id: "waist_circumference", label: "Waist circumference over 102 cm", points: 4 };
+    return { id, label: band.label, points: band.points };
   }
 
-  if (waistCircumferenceCm < 80) {
-    return { id: "waist_circumference", label: "Waist circumference below 80 cm", points: 0 };
-  }
-
-  if (waistCircumferenceCm <= 88) {
-    return { id: "waist_circumference", label: "Waist circumference 80 to 88 cm", points: 3 };
-  }
-
-  return { id: "waist_circumference", label: "Waist circumference over 88 cm", points: 4 };
+  throw new Error(`No band matched value ${value} for rule ${id}`);
 }
 
-function familyHistoryFactor(familyHistory: FamilyHistory): ContributingFactor {
-  if (familyHistory === "immediate") {
-    return { id: "family_history", label: "Immediate family history of diabetes", points: 5 };
-  }
-
-  if (familyHistory === "extended") {
-    return { id: "family_history", label: "Extended family history of diabetes", points: 3 };
-  }
-
-  return { id: "family_history", label: "No family history of diabetes", points: 0 };
+function booleanFactor(id: string, rule: BooleanRule, answer: boolean): ContributingFactor {
+  return { id, label: rule.label, points: answer === rule.appliesWhen ? rule.points : 0 };
 }
 
-function hba1cFactor(hba1cControl: HbA1cControl): ContributingFactor {
-  if (hba1cControl === "known_elevated") {
-    return { id: "hba1c_control", label: "Self-reported HbA1c is elevated", points: 3 };
+function choiceFactor(id: string, rule: ChoiceRule, answer: string): ContributingFactor {
+  const choice = rule[answer];
+
+  if (!choice) {
+    throw new Error(`Unknown answer "${answer}" for rule ${id}`);
   }
 
-  if (hba1cControl === "unknown") {
-    return { id: "hba1c_control", label: "HbA1c is unknown", points: 1 };
-  }
-
-  return { id: "hba1c_control", label: "Self-reported HbA1c is in range", points: 0 };
+  return { id, label: choice.label, points: choice.points };
 }
 
-function glucoseEpisodeFactor(glucoseEpisodeFrequency: EpisodeFrequency): ContributingFactor {
-  if (glucoseEpisodeFrequency === "weekly_or_more") {
-    return { id: "glucose_episodes", label: "Hypo/hyperglycemic episodes weekly or more", points: 3 };
-  }
-
-  if (glucoseEpisodeFrequency === "monthly") {
-    return { id: "glucose_episodes", label: "Hypo/hyperglycemic episodes monthly", points: 1 };
-  }
-
-  return { id: "glucose_episodes", label: "Hypo/hyperglycemic episodes are rare", points: 0 };
-}
-
-function diabetesDurationFactor(diabetesDuration: DiabetesDuration): ContributingFactor {
-  if (diabetesDuration === "over_10_years") {
-    return { id: "diabetes_duration", label: "Diabetes duration over 10 years", points: 2 };
-  }
-
-  if (diabetesDuration === "5_to_10_years") {
-    return { id: "diabetes_duration", label: "Diabetes duration 5 to 10 years", points: 1 };
-  }
-
-  return { id: "diabetes_duration", label: "Diabetes duration under 5 years", points: 0 };
-}
-
-function bloodPressureFactor(bloodPressureControl: BloodPressureControl): ContributingFactor {
-  if (bloodPressureControl === "uncontrolled") {
-    return { id: "blood_pressure_control", label: "Blood pressure is uncontrolled", points: 2 };
-  }
-
-  if (bloodPressureControl === "unknown") {
-    return { id: "blood_pressure_control", label: "Blood pressure control is unknown", points: 1 };
-  }
-
-  return { id: "blood_pressure_control", label: "Blood pressure is controlled", points: 0 };
-}
-
-function smokingFactor(smokingStatus: SmokingStatus): ContributingFactor {
-  if (smokingStatus === "current_smoker") {
-    return { id: "smoking_status", label: "Current smoker", points: 2 };
-  }
-
-  if (smokingStatus === "former_smoker") {
-    return { id: "smoking_status", label: "Former smoker", points: 1 };
-  }
-
-  return { id: "smoking_status", label: "Non-smoker", points: 0 };
-}
-
-function booleanFactor({
-  id,
-  label,
-  applies,
-  points,
-}: {
-  id: string;
-  label: string;
-  applies: boolean;
-  points: number;
-}): ContributingFactor {
-  return { id, label, points: applies ? points : 0 };
+function highestUrgency(urgencies: Exclude<ClinicalUrgency, "routine">[]) {
+  return urgencies.includes("emergency") ? "emergency" : "urgent";
 }
 
 function totalPoints(factors: ContributingFactor[]): number {
   return factors.reduce((score, factor) => score + (factor.points ?? 0), 0);
 }
 
-function contributingFactors(factors: ContributingFactor[]): ContributingFactor[] {
+function applicableFactors(factors: ContributingFactor[]): ContributingFactor[] {
   return factors.filter((factor) => (factor.points ?? 0) > 0);
 }

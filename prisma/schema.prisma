@@ -35,41 +35,129 @@ enum Classification {
   @@map("classification")
 }
 
-model Assessment {
-  id             String         @id @default(uuid())
-  referenceCode  String         @unique @map("reference_code")
-  sessionId      String         @map("session_id")
-  diabetesStatus DiabetesStatus @map("diabetes_status")
-  responses      Json
-  createdAt      DateTime       @default(now()) @map("created_at")
-  result         Result?
+enum ClinicalUrgency {
+  ROUTINE   @map("routine")
+  URGENT    @map("urgent")
+  EMERGENCY @map("emergency")
 
+  @@map("clinical_urgency")
+}
+
+enum ScoringRuleStatus {
+  DRAFT             @map("draft")
+  IN_CLINICAL_REVIEW @map("in_clinical_review")
+  APPROVED          @map("approved")
+  ACTIVE            @map("active")
+  RETIRED           @map("retired")
+
+  @@map("scoring_rule_status")
+}
+
+enum AuditActorType {
+  PUBLIC @map("public")
+  NURSE  @map("nurse")
+  SYSTEM @map("system")
+
+  @@map("audit_actor_type")
+}
+
+model Assessment {
+  id                   String         @id @default(uuid())
+  referenceCode        String         @unique @map("reference_code")
+  sessionId            String         @map("session_id")
+  idempotencyKey       String?        @unique @map("idempotency_key")
+  questionnaireVersion String         @map("questionnaire_version")
+  responsesHash        String         @map("responses_hash")
+  diabetesStatus       DiabetesStatus @map("diabetes_status")
+  responses            Json
+  anonymizedAt         DateTime?      @map("anonymized_at")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  result               Result?
+
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
   @@map("assessments")
 }
 
 model ScoringRuleVersion {
-  id            String        @id @default(uuid())
+  id            String            @id @default(uuid())
   branch        ScoringBranch
-  versionNumber Int           @map("version_number")
+  versionNumber Int               @map("version_number")
   rules         Json
-  effectiveFrom DateTime      @default(now()) @map("effective_from")
-  createdBy     String        @map("created_by")
+  rulesetHash   String            @map("ruleset_hash")
+  status        ScoringRuleStatus @default(DRAFT)
+  effectiveFrom DateTime          @default(now()) @map("effective_from")
+  createdBy     String            @map("created_by")
+  approvedBy    String?           @map("approved_by")
+  approvedAt    DateTime?         @map("approved_at")
+  retiredAt     DateTime?         @map("retired_at")
   results       Result[]
 
   @@unique([branch, versionNumber])
+  @@index([branch, status])
   @@map("scoring_rule_versions")
 }
 
 model Result {
-  id                   String             @id @default(uuid())
-  assessmentId         String             @unique @map("assessment_id")
-  scoringRuleVersionId String             @map("scoring_rule_version_id")
-  classification       Classification
-  score                Decimal?           @db.Decimal(10, 2)
-  contributingFactors  Json               @map("contributing_factors")
-  createdAt            DateTime           @default(now()) @map("created_at")
-  assessment           Assessment         @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  scoringRuleVersion   ScoringRuleVersion @relation(fields: [scoringRuleVersionId], references: [id], onDelete: Restrict)
+  id                    String             @id @default(uuid())
+  assessmentId          String             @unique @map("assessment_id")
+  scoringRuleVersionId  String             @map("scoring_rule_version_id")
+  classification        Classification
+  urgency               ClinicalUrgency    @default(ROUTINE)
+  urgentCareRecommended Boolean            @default(false) @map("urgent_care_recommended")
+  score                 Decimal?           @db.Decimal(10, 2)
+  contributingFactors   Json               @map("contributing_factors")
+  redFlags              Json               @map("red_flags")
+  rulesetHash           String             @map("ruleset_hash")
+  engineVersion         String             @map("engine_version")
+  createdAt             DateTime           @default(now()) @map("created_at")
+  assessment            Assessment         @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  scoringRuleVersion    ScoringRuleVersion @relation(fields: [scoringRuleVersionId], references: [id], onDelete: Restrict)
 
+  @@index([classification])
+  @@index([urgency])
   @@map("results")
+}
+
+model NurseSession {
+  id         String    @id @default(uuid())
+  tokenHash  String    @unique @map("token_hash")
+  ipHash     String?   @map("ip_hash")
+  userAgent  String?   @map("user_agent")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  lastSeenAt DateTime  @default(now()) @map("last_seen_at")
+  expiresAt  DateTime  @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+
+  @@index([expiresAt])
+  @@map("nurse_sessions")
+}
+
+model AuditEvent {
+  id             String         @id @default(uuid())
+  action         String
+  actorType      AuditActorType @map("actor_type")
+  actorSessionId String?        @map("actor_session_id")
+  resourceType   String?        @map("resource_type")
+  resourceId     String?        @map("resource_id")
+  ipHash         String?        @map("ip_hash")
+  userAgent      String?        @map("user_agent")
+  metadata       Json?
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  @@index([createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([resourceType, resourceId])
+  @@map("audit_events")
+}
+
+model RateLimitCounter {
+  id          String   @id @default(uuid())
+  bucket      String
+  identifier  String
+  windowStart DateTime @map("window_start")
+  count       Int      @default(0)
+
+  @@unique([bucket, identifier, windowStart])
+  @@index([windowStart])
+  @@map("rate_limit_counters")
 }

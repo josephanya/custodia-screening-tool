@@ -500,8 +500,21 @@ h2 {
 }
 
 .urgent {
+  border-radius: 8px;
   color: var(--danger);
   font-weight: 700;
+  padding: 14px 16px;
+}
+
+.urgent-urgent {
+  background: #fbe6d8;
+  border: 1px solid var(--warm);
+  color: #6f3a19;
+}
+
+.urgent-emergency {
+  background: #f8ded9;
+  border: 1px solid var(--danger);
 }
 
 .disclaimer {
@@ -708,6 +721,67 @@ h2 {
 
 .detailFlag {
   margin-top: 8px;
+}
+
+.urgentRow {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.urgencyBadge {
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 8px;
+}
+
+.urgencyBadge-urgent {
+  background: #fbe6d8;
+  color: #8a4a20;
+}
+
+.urgencyBadge-emergency {
+  background: var(--danger);
+  color: white;
+}
+
+.urgencyBanner {
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 16px;
+}
+
+.urgencyBanner p,
+.urgencyBanner ul {
+  margin: 0;
+}
+
+.urgencyBanner ul {
+  padding-left: 18px;
+}
+
+.urgencyBanner-urgent {
+  background: #fbe6d8;
+  border: 1px solid var(--warm);
+  color: #6f3a19;
+}
+
+.urgencyBanner-emergency {
+  background: #f8ded9;
+  border: 1px solid var(--danger);
+  color: #7a2c1e;
+}
+
+.dashboardPager {
+  justify-self: start;
+  margin-top: 16px;
+}
+
+.monospace {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
 }
 
 .detailGrid {

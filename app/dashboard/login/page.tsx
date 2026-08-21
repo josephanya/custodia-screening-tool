@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signInNurse } from "../actions";
-import { isNurseAuthenticated } from "@/lib/nurse-auth";
+import { readNurseSession } from "@/lib/nurse-auth";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -10,14 +10,17 @@ type LoginPageProps = {
   }>;
 };
 
+export const dynamic = "force-dynamic";
+
 const errorMessages: Record<string, string> = {
   invalid_password: "That password did not match the nurse dashboard password.",
   missing_password: "Enter the nurse dashboard password.",
-  not_configured: "NURSE_DASHBOARD_PASSWORD is not configured for this environment.",
+  not_configured: "Nurse dashboard access is not configured for this environment.",
+  too_many_attempts: "Too many sign-in attempts. Wait a few minutes and try again.",
 };
 
 export default async function NurseDashboardLoginPage({ searchParams }: LoginPageProps) {
-  if (await isNurseAuthenticated()) {
+  if (await readNurseSession()) {
     redirect("/dashboard");
   }
 

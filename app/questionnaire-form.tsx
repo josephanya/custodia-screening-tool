@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import {
   buildNurseWhatsAppLink,
   nonDiagnosticDisclaimer,
   resultContent,
+  urgencyContent,
 } from "./result-content";
-import type { Classification } from "@/lib/scoring";
+import type { Classification, ClinicalUrgency } from "@/lib/scoring";
 
 type DiabetesStatus = "not_diagnosed" | "diagnosed";
 type FieldValue = string | number | boolean;
@@ -29,6 +30,7 @@ type SubmissionResult = {
     classification: Classification;
     score: number | null;
     contributingFactors: Array<{ id: string; label: string; points?: number }>;
+    urgency: ClinicalUrgency;
     urgentCareRecommended: boolean;
   };
 };
@@ -247,6 +249,7 @@ export function QuestionnaireForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const branchQuestions = diabetesStatus === "diagnosed" ? diagnosedQuestions : notDiagnosedQuestions;
   const quizQuestions = diabetesStatus ? [branchQuestion, ...branchQuestions] : [branchQuestion];
@@ -262,10 +265,12 @@ export function QuestionnaireForm() {
     setCurrentQuestionIndex(0);
     setSubmissionResult(null);
     setErrors([]);
+    idempotencyKeyRef.current = null;
   }
 
   function updateResponse(key: string, value: FieldValue) {
     setResponses((currentResponses) => ({ ...currentResponses, [key]: value }));
+    idempotencyKeyRef.current = null;
   }
 
   function startQuiz() {
@@ -295,11 +300,15 @@ export function QuestionnaireForm() {
     setIsSubmitting(true);
     setErrors([]);
     setSubmissionResult(null);
+    idempotencyKeyRef.current ??= crypto.randomUUID();
 
     try {
       const response = await fetch("/api/assessments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKeyRef.current,
+        },
         body: JSON.stringify({ diabetesStatus, responses: normalizeResponses(responses) }),
       });
       const body = await response.json();
@@ -343,6 +352,7 @@ export function QuestionnaireForm() {
     setIsSubmitting(false);
     setErrors([]);
     setSubmissionResult(null);
+    idempotencyKeyRef.current = null;
   }
 
   if (stage === "intro") {
@@ -604,7 +614,11 @@ function ResultSummary({ submissionResult }: { submissionResult: SubmissionResul
         <p>{content.summary}</p>
       </div>
 
-      {result.urgentCareRecommended ? <p className="urgent">Please seek urgent clinical care now.</p> : null}
+      {urgencyContent[result.urgency] ? (
+        <p className={`urgent urgent-${result.urgency}`} role="alert">
+          {urgencyContent[result.urgency]}
+        </p>
+      ) : null}
 
       {showContributingFactors ? (
         <div className="factorBox">

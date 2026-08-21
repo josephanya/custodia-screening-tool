@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "test": "node --import tsx --test \"lib/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
     "db:seed": "prisma db seed",
+    "db:retention": "tsx scripts/retention.ts",
+    "auth:hash": "tsx scripts/hash-password.ts",
     "lint": "eslint",
     "postinstall": "prisma generate"
   },
@@ -29,5 +32,8 @@
     "prisma": "^7.9.1",
     "tsx": "^4.23.12",
     "typescript": "^5"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.1"
   }
 }

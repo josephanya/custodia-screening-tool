@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import type { KeyboardEvent } from "react";
 
+import type { ClinicalUrgency } from "@/lib/scoring";
+
 type AssessmentRowProps = {
   classification: string;
   diabetesStatus: string;
@@ -12,6 +14,13 @@ type AssessmentRowProps = {
   ruleVersion: string;
   score: string;
   submittedAt: string;
+  urgency: ClinicalUrgency;
+};
+
+const urgencyLabels: Record<ClinicalUrgency, string> = {
+  routine: "Routine",
+  urgent: "Urgent",
+  emergency: "Emergency",
 };
 
 export function AssessmentRow({
@@ -23,6 +32,7 @@ export function AssessmentRow({
   ruleVersion,
   score,
   submittedAt,
+  urgency,
 }: AssessmentRowProps) {
   const router = useRouter();
 
@@ -39,7 +49,7 @@ export function AssessmentRow({
 
   return (
     <tr
-      className={`${flagged ? "flaggedRow" : ""} clickableRow`}
+      className={`${flagged ? "flaggedRow" : ""} ${urgency !== "routine" ? "urgentRow" : ""} clickableRow`}
       onClick={openAssessment}
       onKeyDown={handleKeyDown}
       role="link"
@@ -53,6 +63,13 @@ export function AssessmentRow({
           </span>
         ) : (
           <span className="mutedText">-</span>
+        )}
+      </td>
+      <td>
+        {urgency === "routine" ? (
+          <span className="mutedText">-</span>
+        ) : (
+          <span className={`urgencyBadge urgencyBadge-${urgency}`}>{urgencyLabels[urgency]}</span>
         )}
       </td>
       <td>

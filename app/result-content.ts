@@ -1,4 +1,4 @@
-import type { Classification } from "@/lib/scoring";
+import type { Classification, ClinicalUrgency } from "@/lib/scoring";
 
 export const nonDiagnosticDisclaimer = "This tool does not diagnose. It estimates risk based on your answers.";
 
@@ -12,6 +12,12 @@ export type ResultContent = {
   tips: string[];
 };
 
+export const urgencyContent: Record<ClinicalUrgency, string | null> = {
+  routine: null,
+  urgent: "Some of your answers need clinical attention today. Please contact a clinic or nurse now.",
+  emergency: "Your answers describe an emergency. Go to the nearest emergency department now.",
+};
+
 export function buildNurseWhatsAppLink(classification: Classification, referenceCode: string): string | null {
   if (classification !== "diabetes_high") {
     return null;
@@ -23,9 +29,9 @@ export function buildNurseWhatsAppLink(classification: Classification, reference
     return null;
   }
 
-  const diabetesHighWhatsAppMessage = `Hello, I completed the diabetes screening. My reference code is ${referenceCode}. My result was diabetes_high, and I would like to chat with a nurse.`;
+  const handoffMessage = `Hello, I completed the diabetes screening. My reference code is ${referenceCode}, and I would like to chat with a nurse.`;
 
-  return `https://wa.me/${normalizedNumber}?text=${encodeURIComponent(diabetesHighWhatsAppMessage)}`;
+  return `https://wa.me/${normalizedNumber}?text=${encodeURIComponent(handoffMessage)}`;
 }
 
 export const resultContent: Record<Classification, ResultContent> = {

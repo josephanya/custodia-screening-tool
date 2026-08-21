@@ -1,6 +1,7 @@
 import type {
   Prisma,
 } from "@/lib/generated/prisma/client";
+import { redFlagIds } from "@/lib/scoring";
 import type {
   BloodPressureControl,
   CheckupRecency,
@@ -31,6 +32,15 @@ type ValidationFailure = {
 
 export type AssessmentSubmissionValidation = ValidationSuccess | ValidationFailure;
 
+type PlausibleRange = { min: number; max: number };
+
+const plausibleRanges = {
+  age: { min: 1, max: 120 },
+  heightCm: { min: 50, max: 250 },
+  weightKg: { min: 10, max: 400 },
+  waistCircumferenceCm: { min: 30, max: 250 },
+} satisfies Record<string, PlausibleRange>;
+
 const sexes = ["male", "female"] as const;
 const familyHistories = ["none", "extended", "immediate"] as const;
 const hba1cControls = ["known_good", "known_elevated", "unknown"] as const;
@@ -39,13 +49,6 @@ const diabetesDurations = ["under_5_years", "5_to_10_years", "over_10_years"] as
 const bloodPressureControls = ["controlled", "uncontrolled", "unknown"] as const;
 const smokingStatuses = ["non_smoker", "former_smoker", "current_smoker"] as const;
 const checkupRecencies = ["within_12_months", "over_12_months"] as const;
-
-export const redFlagIds: RedFlagId[] = [
-  "foot_wound_or_ulcer",
-  "sudden_vision_loss_or_blurring",
-  "ketoacidosis_symptoms",
-  "chest_pain_or_shortness_of_breath",
-];
 
 export function validateAssessmentSubmission(payload: unknown): AssessmentSubmissionValidation {
   if (!isRecord(payload)) {
@@ -75,9 +78,9 @@ function validateNotDiagnosedResponses(responses: Record<string, unknown>): Asse
   const waistCircumferenceCm = readWaistCircumference(responses, errors);
   const input: NotDiagnosedScoringInput = {
     diabetesStatus: "not_diagnosed",
-    age: readNumber(responses, "age", errors),
-    heightCm: readNumber(responses, "heightCm", errors),
-    weightKg: readNumber(responses, "weightKg", errors),
+    age: readNumber(responses, "age", plausibleRanges.age, errors),
+    heightCm: readNumber(responses, "heightCm", plausibleRanges.heightCm, errors),
+    weightKg: readNumber(responses, "weightKg", plausibleRanges.weightKg, errors),
     sex: readEnum(responses, "sex", sexes, errors) as Sex,
     waistCircumferenceCm,
     dailyPhysicalActivity: readBoolean(responses, "dailyPhysicalActivity", errors),
@@ -151,13 +154,18 @@ function validateDiagnosedResponses(responses: Record<string, unknown>): Assessm
   };
 }
 
-function readNumber(responses: Record<string, unknown>, key: string, errors: string[]): number {
+function readNumber(
+  responses: Record<string, unknown>,
+  key: string,
+  range: PlausibleRange,
+  errors: string[],
+): number {
   const value = responses[key];
   const numberValue = typeof value === "number" ? value : Number(value);
 
-  if (!Number.isFinite(numberValue) || numberValue <= 0) {
-    errors.push(`${key} is required and must be a positive number.`);
-    return 0;
+  if (!Number.isFinite(numberValue) || numberValue < range.min || numberValue > range.max) {
+    errors.push(`${key} is required and must be between ${range.min} and ${range.max}.`);
+    return range.min;
   }
 
   return numberValue;
@@ -201,9 +209,12 @@ function readWaistCircumference(
   }
 
   const numberValue = typeof value === "number" ? value : Number(value);
+  const range = plausibleRanges.waistCircumferenceCm;
 
-  if (!Number.isFinite(numberValue) || numberValue <= 0) {
-    errors.push("waistCircumferenceCm is required and must be a positive number or unknown.");
+  if (!Number.isFinite(numberValue) || numberValue < range.min || numberValue > range.max) {
+    errors.push(
+      `waistCircumferenceCm is required and must be between ${range.min} and ${range.max}, or unknown.`,
+    );
     return "unknown";
   }
 

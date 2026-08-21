@@ -1,14 +1,23 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
+import { requireNurseSession } from "../../require-session";
 import {
   fromPrismaClassification,
   fromPrismaDiabetesStatus,
   fromPrismaScoringBranch,
+  fromPrismaUrgency,
 } from "@/lib/assessment-api";
-import { isNurseAuthenticated } from "@/lib/nurse-auth";
+import { auditActions, recordAuditEvent } from "@/lib/audit";
+import { AuditActorType } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { Classification, ContributingFactor, DiabetesStatus, ScoringBranch } from "@/lib/scoring";
+import type {
+  Classification,
+  ClinicalUrgency,
+  ContributingFactor,
+  DiabetesStatus,
+  ScoringBranch,
+} from "@/lib/scoring";
 
 type AssessmentDetailPageProps = {
   params: Promise<{
@@ -18,18 +27,23 @@ type AssessmentDetailPageProps = {
 
 export const dynamic = "force-dynamic";
 
-export default async function AssessmentDetailPage({ params }: AssessmentDetailPageProps) {
-  if (!(await isNurseAuthenticated())) {
-    redirect("/dashboard/login");
-  }
+const urgencyCopy: Record<ClinicalUrgency, string | null> = {
+  routine: null,
+  urgent: "Red flags were reported. This person needs same-day clinical review.",
+  emergency: "Emergency red flags were reported. This person was told to seek emergency care now.",
+};
 
+export default async function AssessmentDetailPage({ params }: AssessmentDetailPageProps) {
+  const session = await requireNurseSession();
   const { id } = await params;
   const assessment = await prisma.assessment.findUnique({
     where: { id },
     include: {
       result: {
         include: {
-          scoringRuleVersion: true,
+          scoringRuleVersion: {
+            select: { branch: true, versionNumber: true },
+          },
         },
       },
     },
@@ -39,10 +53,22 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
     notFound();
   }
 
+  await recordAuditEvent({
+    action: auditActions.assessmentViewed,
+    actorType: AuditActorType.NURSE,
+    actorSessionId: session.sessionId,
+    resourceType: "assessment",
+    resourceId: assessment.id,
+    ipHash: session.request.ipHash,
+    userAgent: session.request.userAgent,
+  });
+
   const diabetesStatus = fromPrismaDiabetesStatus(assessment.diabetesStatus);
   const classification = assessment.result ? fromPrismaClassification(assessment.result.classification) : null;
+  const urgency = assessment.result ? fromPrismaUrgency(assessment.result.urgency) : "routine";
   const branch = assessment.result ? fromPrismaScoringBranch(assessment.result.scoringRuleVersion.branch) : null;
   const factors = parseContributingFactors(assessment.result?.contributingFactors);
+  const redFlags = parseContributingFactors(assessment.result?.redFlags);
 
   return (
     <main className="pageShell dashboardShell">
@@ -66,6 +92,20 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
           ) : null}
         </div>
 
+        {urgencyCopy[urgency] ? (
+          <div className={`urgencyBanner urgencyBanner-${urgency}`} role="alert">
+            <strong>{urgency === "emergency" ? "Emergency" : "Urgent"}</strong>
+            <p>{urgencyCopy[urgency]}</p>
+            {redFlags.length > 0 ? (
+              <ul>
+                {redFlags.map((redFlag) => (
+                  <li key={redFlag.id ?? redFlag.label}>{redFlag.label}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
+
         <div className="detailGrid">
           <section className="detailBlock">
             <h2>Summary</h2>
@@ -83,6 +123,10 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
                 <dd>{formatClassification(classification)}</dd>
               </div>
               <div>
+                <dt>Clinical urgency</dt>
+                <dd>{formatUrgency(urgency)}</dd>
+              </div>
+              <div>
                 <dt>Score</dt>
                 <dd>{formatScore(assessment.result?.score)}</dd>
               </div>
@@ -93,6 +137,14 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
                     ? `${formatBranch(branch)} v${assessment.result.scoringRuleVersion.versionNumber}`
                     : "Pending result"}
                 </dd>
+              </div>
+              <div>
+                <dt>Questionnaire</dt>
+                <dd>{assessment.questionnaireVersion}</dd>
+              </div>
+              <div>
+                <dt>Ruleset hash</dt>
+                <dd className="monospace">{formatHash(assessment.result?.rulesetHash)}</dd>
               </div>
             </dl>
           </section>
@@ -116,22 +168,31 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
 
         <section className="detailBlock responsesBlock">
           <h2>Full responses</h2>
-          <div className="responsesTableWrap">
-            <table className="responsesTable">
-              <tbody>
-                {responseEntries(assessment.responses).map(([key, value]) => (
-                  <tr key={key}>
-                    <th scope="row">{formatResponseKey(key)}</th>
-                    <td>{formatResponseValue(value)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <details className="rawJsonBlock">
-            <summary>Raw response JSON</summary>
-            <pre>{JSON.stringify(assessment.responses, null, 2)}</pre>
-          </details>
+          {assessment.anonymizedAt ? (
+            <p className="mutedText">
+              Responses were anonymised on {formatDateTime(assessment.anonymizedAt)} under the data
+              retention policy. The clinical result above is retained.
+            </p>
+          ) : (
+            <>
+              <div className="responsesTableWrap">
+                <table className="responsesTable">
+                  <tbody>
+                    {responseEntries(assessment.responses).map(([key, value]) => (
+                      <tr key={key}>
+                        <th scope="row">{formatResponseKey(key)}</th>
+                        <td>{formatResponseValue(value)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <details className="rawJsonBlock">
+                <summary>Raw response JSON</summary>
+                <pre>{JSON.stringify(assessment.responses, null, 2)}</pre>
+              </details>
+            </>
+          )}
         </section>
       </section>
     </main>
@@ -212,6 +273,10 @@ function formatClassification(classification: Classification | null) {
     .join(" ");
 }
 
+function formatUrgency(urgency: ClinicalUrgency) {
+  return urgency[0].toUpperCase() + urgency.slice(1);
+}
+
 function formatBranch(branch: ScoringBranch | null) {
   if (!branch) {
     return "Rule";
@@ -226,4 +291,12 @@ function formatScore(score: unknown) {
   }
 
   return Number(score).toString();
+}
+
+function formatHash(hash: string | undefined) {
+  if (!hash) {
+    return "-";
+  }
+
+  return `${hash.slice(0, 16)}…`;
 }
