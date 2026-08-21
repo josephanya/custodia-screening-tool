@@ -11,6 +11,7 @@ export const auditActions = {
   sessionExpired: "session_expired",
   assessmentCreated: "assessment_created",
   assessmentReplayed: "assessment_replayed",
+  assessmentIdempotencyConflict: "assessment_idempotency_conflict",
   assessmentRateLimited: "assessment_rate_limited",
   assessmentResultViewed: "assessment_result_viewed",
   assessmentListViewed: "assessment_list_viewed",

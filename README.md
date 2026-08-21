@@ -8,7 +8,7 @@ The public experience is titled **Know Your Risk | Diabetes Screening**. It guid
 
 - Public diabetes screening flow for people who are diagnosed, not diagnosed, or unsure.
 - Two scoring branches: diabetes risk and diabetes complication risk.
-- Reference codes for each submitted assessment, generated as `CST-XXXXXXXX`.
+- Reference codes for each submitted assessment, generated as `CST-XXXXXXXXXXXX`.
 - Postgres persistence for assessments, responses, scoring rule versions, and results.
 - Nurse dashboard at `/dashboard` with password-protected access.
 - Dashboard search by reference code and detail pages with full responses and scoring breakdowns.
@@ -185,7 +185,9 @@ Local Postgres runs on host port `5433` and container port `5432`.
 - **Public rate limits** allow 30 submissions per IP per hour and 5 per assessment session per hour.
   Both are needed because CGNAT puts many legitimate mobile users behind one address.
 - **Idempotency** is keyed on the `Idempotency-Key` header, so retries and double-clicks return the
-  original result rather than duplicating a record.
+  original result rather than duplicating a record. Replay is scoped to the submitter: the caller
+  must match the original assessment session or resend identical answers, otherwise the request is
+  rejected with a `409` so a reused key cannot read back someone else's result.
 - **Reference codes** are 60 bits of CSPRNG output in an unambiguous base32 alphabet, and dashboard
   search requires an exact normalised match rather than a substring.
 - **Audit events** are recorded for every login, list view, search, and record view.
@@ -213,10 +215,16 @@ Dashboard capabilities:
 ## API Routes
 
 - `POST /api/assessments`: validate, score, persist, and return a new assessment result. Honours
-  `Idempotency-Key`; returns 400, 413, 429, 500, or 503 with a generic message and no internal
+  `Idempotency-Key`; returns 400, 409, 413, 429, 500, or 503 with a generic message and no internal
   detail.
 - `GET /api/assessments/:id/result`: return a result for the current assessment session.
 - `GET /api/health`: database connectivity plus active-ruleset hash verification.
+
+### Dependency overrides
+
+`package.json` pins `deepmerge-ts@^8.0.1` through `overrides`. `@prisma/config` depends on `7.1.5`,
+which carries GHSA-ggr8-5vv4-36mx, and no Prisma release has picked up the fix yet. Drop the
+override once Prisma bumps the dependency upstream.
 
 ## Deployment Notes
 

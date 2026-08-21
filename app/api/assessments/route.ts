@@ -17,15 +17,15 @@ import { auditActions, recordAuditEvent } from "@/lib/audit";
 import { assessmentSessionCookieName, assessmentSessionMaxAgeSeconds, sessionCookieOptions } from "@/lib/cookies";
 import { AuditActorType, Prisma, ScoringRuleStatus } from "@/lib/generated/prisma/client";
 import { canonicalHash, hashForBranch } from "@/lib/hashing";
+import { isValidIdempotencyKey, resolveIdempotentReplay } from "@/lib/idempotency";
 import { logError, logEvent, logWarning } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { consumeRateLimits } from "@/lib/rate-limit";
 import { createReferenceCode } from "@/lib/reference-code";
-import { readRequestContext } from "@/lib/request-context";
+import { readRequestContext, type RequestContext } from "@/lib/request-context";
 import { scoreAssessment, scoringRuleVersions, type ScoringResult } from "@/lib/scoring";
 
 const MAX_BODY_BYTES = 16 * 1024;
-const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9_.:-]{8,128}$/;
 
 const submissionRateLimits = {
   perIp: { limit: 30, windowSeconds: 60 * 60 },
@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   const context = readRequestContext(request.headers);
   const sessionId = request.cookies.get(assessmentSessionCookieName())?.value ?? randomUUID();
+  let racedIdempotencyKey: string | null = null;
+  let racedResponsesHash: string | null = null;
 
   try {
     const declaredLength = Number(request.headers.get("content-length") ?? 0);
@@ -74,25 +76,8 @@ export async function POST(request: NextRequest) {
 
     const idempotencyKey = request.headers.get("idempotency-key");
 
-    if (idempotencyKey && !IDEMPOTENCY_KEY_PATTERN.test(idempotencyKey)) {
+    if (idempotencyKey && !isValidIdempotencyKey(idempotencyKey)) {
       return errorResponse(400, ["Idempotency-Key must be 8 to 128 URL-safe characters."]);
-    }
-
-    if (idempotencyKey) {
-      const replayed = await findStoredSubmission({ idempotencyKey });
-
-      if (replayed) {
-        await recordAuditEvent({
-          action: auditActions.assessmentReplayed,
-          actorType: AuditActorType.PUBLIC,
-          resourceType: "assessment",
-          resourceId: replayed.assessmentId,
-          ipHash: context.ipHash,
-          userAgent: context.userAgent,
-        });
-
-        return submissionResponse(replayed, sessionId, 200, true);
-      }
     }
 
     const rawBody = await request.text();
@@ -115,11 +100,30 @@ export async function POST(request: NextRequest) {
       return errorResponse(400, validation.errors);
     }
 
+    const responsesHash = canonicalHash(validation.responses);
+
+    racedIdempotencyKey = idempotencyKey;
+    racedResponsesHash = responsesHash;
+
+    if (idempotencyKey) {
+      const replay = await replayStoredSubmission({
+        idempotencyKey,
+        sessionId,
+        responsesHash,
+        context,
+      });
+
+      if (replay) {
+        return replay;
+      }
+    }
+
     const scoringResult = scoreAssessment(validation.input);
     const stored = await persistSubmission({
       sessionId,
       idempotencyKey,
       responses: validation.responses,
+      responsesHash,
       scoringResult,
     });
 
@@ -148,11 +152,16 @@ export async function POST(request: NextRequest) {
 
     return submissionResponse(stored, sessionId, 201, false);
   } catch (error) {
-    if (isUniqueConstraintError(error, "idempotency_key")) {
-      const winner = await findStoredSubmission({ idempotencyKey: request.headers.get("idempotency-key") ?? "" });
+    if (isUniqueConstraintError(error, "idempotency_key") && racedIdempotencyKey && racedResponsesHash) {
+      const replay = await replayStoredSubmission({
+        idempotencyKey: racedIdempotencyKey,
+        sessionId,
+        responsesHash: racedResponsesHash,
+        context,
+      });
 
-      if (winner) {
-        return submissionResponse(winner, sessionId, 200, true);
+      if (replay) {
+        return replay;
       }
     }
 
@@ -180,6 +189,8 @@ type StoredSubmission = {
   referenceCode: string;
   resultId: string;
   scoringRuleVersion: number;
+  sessionId: string;
+  responsesHash: string;
   result: ScoringResult;
 };
 
@@ -187,11 +198,13 @@ async function persistSubmission({
   sessionId,
   idempotencyKey,
   responses,
+  responsesHash,
   scoringResult,
 }: {
   sessionId: string;
   idempotencyKey: string | null;
   responses: Prisma.InputJsonValue;
+  responsesHash: string;
   scoringResult: ScoringResult;
 }): Promise<StoredSubmission> {
   const expectedHash = hashForBranch(scoringResult.branch);
@@ -230,7 +243,7 @@ async function persistSubmission({
         sessionId,
         idempotencyKey,
         questionnaireVersion: scoringResult.questionnaireVersion,
-        responsesHash: canonicalHash(responses),
+        responsesHash,
         diabetesStatus: toPrismaDiabetesStatus(scoringResult.branch === "risk_of_diabetes" ? "not_diagnosed" : "diagnosed"),
         responses,
       },
@@ -255,9 +268,62 @@ async function persistSubmission({
       referenceCode: assessment.referenceCode,
       resultId: result.id,
       scoringRuleVersion: ruleVersion.versionNumber,
+      sessionId: assessment.sessionId,
+      responsesHash: assessment.responsesHash,
       result: scoringResult,
     };
   });
+}
+
+async function replayStoredSubmission({
+  idempotencyKey,
+  sessionId,
+  responsesHash,
+  context,
+}: {
+  idempotencyKey: string;
+  sessionId: string;
+  responsesHash: string;
+  context: RequestContext;
+}) {
+  const stored = await findStoredSubmission({ idempotencyKey });
+
+  if (!stored) {
+    return null;
+  }
+
+  const decision = resolveIdempotentReplay(stored, { sessionId, responsesHash });
+
+  if (decision.outcome === "conflict") {
+    await recordAuditEvent({
+      action: auditActions.assessmentIdempotencyConflict,
+      actorType: AuditActorType.PUBLIC,
+      resourceType: "assessment",
+      resourceId: stored.assessmentId,
+      ipHash: context.ipHash,
+      userAgent: context.userAgent,
+    });
+    logWarning("assessment_idempotency_conflict", { assessmentId: stored.assessmentId });
+
+    return errorResponse(409, [
+      "This Idempotency-Key was already used for a different submission. Retry with a new key.",
+    ]);
+  }
+
+  await recordAuditEvent({
+    action: auditActions.assessmentReplayed,
+    actorType: AuditActorType.PUBLIC,
+    resourceType: "assessment",
+    resourceId: stored.assessmentId,
+    ipHash: context.ipHash,
+    userAgent: context.userAgent,
+    metadata: {
+      sessionMatched: decision.sessionMatched,
+      responsesMatched: decision.responsesMatched,
+    },
+  });
+
+  return submissionResponse(stored, sessionId, 200, true);
 }
 
 async function findStoredSubmission({
@@ -279,6 +345,8 @@ async function findStoredSubmission({
     referenceCode: assessment.referenceCode,
     resultId: assessment.result.id,
     scoringRuleVersion: assessment.result.scoringRuleVersion.versionNumber,
+    sessionId: assessment.sessionId,
+    responsesHash: assessment.responsesHash,
     result: rebuildScoringResult(assessment.result, assessment.questionnaireVersion),
   };
 }

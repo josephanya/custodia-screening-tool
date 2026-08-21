@@ -112,8 +112,15 @@ without changing clinical question content that needs sign-off.
 - [x] **`Idempotency-Key` header honoured**, stored in `assessments.idempotency_key` with a unique
   index. A replay returns the original result with `200` and `Idempotency-Replayed: true` instead of
   creating a duplicate assessment.
+- [x] **Replay is scoped to the submitter.** The key alone is not enough to read back a stored
+  result: the caller must match the original assessment session *or* resend answers with the same
+  `responses_hash`. Anything else is a `409`, so a reused key cannot disclose another person's
+  `assessmentId`, `referenceCode`, or classification. The check runs after validation, and both the
+  replay and the conflict are audited with which of the two conditions matched.
+- [x] **Retries still work** for the two real cases: the same session resubmitting, and a retry whose
+  first response (and therefore its session cookie) never arrived but whose answers are identical.
 - [x] **Unique-violation race handled** — a concurrent duplicate returns the winner's result rather
-  than a 500.
+  than a 500, and applies the same scoping check.
 - [x] **Client sends a stable key** for the whole submission attempt, so double-clicks, retries and
   flaky mobile connections cannot produce duplicate records.
 
@@ -185,6 +192,12 @@ without changing clinical question content that needs sign-off.
 - [x] **CI pipeline** ([.github/workflows/ci.yml](../.github/workflows/ci.yml)): install → Prisma
   generate → lint → typecheck → unit tests → build → dependency audit, plus a migration job that
   applies every migration to a real Postgres service and runs the seed.
+- [x] **`npm audit --audit-level=high` passes.** `@prisma/config` pins `deepmerge-ts@7.1.5`, which
+  carries GHSA-ggr8-5vv4-36mx (stack exhaustion on recursive object graphs). Prisma 7.9.1 is the
+  latest release and has no fix, and `npm audit fix --force` would downgrade to `prisma@6.12.0`. An
+  `overrides` entry pins `deepmerge-ts@^8.0.1` instead; the Prisma CLI is verified against it
+  (`generate`, `validate`, `migrate deploy` on a fresh database, `migrate diff`, `db seed`). Remove
+  the override once Prisma ships a release that bumps the dependency.
 - [x] **`npm run typecheck`** added.
 - [ ] **Branch protection** (required checks, required review, no force push) — a GitHub settings
   change, not a repository change.
