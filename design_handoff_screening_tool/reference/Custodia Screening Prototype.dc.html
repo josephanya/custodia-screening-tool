@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F0F7FF;color:#112D50;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#236DAD;text-decoration:none}a:hover{color:#112D50}
+h1,h2,h3,p{margin:0;text-wrap:pretty}
+input::placeholder{color:#8597AA}
+@keyframes cs-spin{to{transform:rotate(360deg)}}
+@keyframes cs-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div id="cs-root" style="min-height:100vh;background:#F0F7FF;display:flex;flex-direction:column">
+
+<sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}">
+  <header style="padding:{{ L.hdrOuter }};position:sticky;top:0;z-index:20;background:{{ L.hdrOuterBg }}">
+    <div style="max-width:1200px;margin:0 auto;padding:{{ L.hdrPad }};display:flex;align-items:center;justify-content:space-between;gap:12px;background:{{ L.hdrBg }};border:{{ L.hdrBorder }};border-radius:{{ L.hdrRadius }};box-shadow:{{ L.hdrShadow }}">
+      <a href="#" onClick="{{ restart }}" style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</a>
+      <sc-if value="{{ vResult }}">
+        <button onClick="{{ restart }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;color:#112D50;display:flex;align-items:center" style-hover="border-color:#112D50" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Start over</button>
+      </sc-if>
+      <sc-if value="{{ notResult }}" hint-placeholder-val="{{ true }}">
+        <span style="display:flex;align-items:center;gap:6px;padding:10px 12px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private screening</span>
+      </sc-if>
+    </div>
+  </header>
+</sc-if>
+
+<sc-if value="{{ vIntro }}" hint-placeholder-val="{{ true }}">
+  <main style="flex:1;width:100%;max-width:1200px;margin:0 auto;padding:{{ L.introPad }};display:grid;grid-template-columns:{{ L.introCols }};gap:{{ L.introGap }};align-items:center;animation:cs-in .35s ease both">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <span style="align-self:flex-start;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #D6E2F0;padding:6px 14px 6px 6px;border-radius:999px;font-size:14px;font-weight:500;color:#4B5D70"><span style="background:#236DAD;color:#fff;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13px">Free</span>Diabetes risk triage</span>
+      <h1 style="font:600 {{ L.introH1 }}/.98 'Geist',sans-serif;letter-spacing:-.05em">Know Your Risk <span style="display:block;color:#236DAD;font-size:{{ L.introH1b }};letter-spacing:-.04em;margin-top:12px">Diabetes Screening</span></h1>
+      <p style="font-size:{{ L.introP }};line-height:1.55;color:#4B5D70;max-width:520px">Answer a few short questions to understand your risk of diabetes or, if you already have diabetes, your risk of complications.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px 18px;font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;text-transform:uppercase;color:#4B5D70"><span>≈ 2 minutes</span><span>·</span><span>One question at a time</span></div>
+    </div>
+    <div style="background:#fff;border-radius:{{ L.introCardR }};padding:{{ L.introCardPad }};display:flex;flex-direction:column;gap:16px;border:1px solid #E3E9F2;box-shadow:0 24px 60px rgba(17,45,80,.08)">
+      <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#F0F7FF;font-size:16px;line-height:1.5;color:#4B5D70"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+      <button role="checkbox" aria-checked="{{ consent }}" onClick="{{ toggleConsent }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:flex-start;gap:14px;padding:18px;border-radius:18px;border:{{ consentBorder }};background:#fff;transition:border-color .15s" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">
+        <sc-if value="{{ consent }}"><span style="width:26px;height:26px;border-radius:8px;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span></sc-if>
+        <sc-if value="{{ noConsent }}" hint-placeholder-val="{{ true }}"><span style="width:26px;height:26px;border-radius:8px;border:2px solid #A8CCF2;flex:none"></span></sc-if>
+        <span style="font-size:16px;line-height:1.5">I understand this is not a diagnosis and agree my answers may be used for screening and nurse review where appropriate.</span>
+      </button>
+      <sc-if value="{{ consent }}">
+        <button onClick="{{ start }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:58px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)" style-hover="background:#1B5A90" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Start →</button>
+      </sc-if>
+      <sc-if value="{{ noConsent }}" hint-placeholder-val="{{ true }}">
+        <button disabled="{{ true }}" aria-disabled="true" style="all:unset;box-sizing:border-box;height:58px;border-radius:999px;background:#E3E9F2;color:#8597AA;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Start →</button>
+        <span style="font-size:14px;color:#4B5D70;text-align:center">Tick the box above to start.</span>
+      </sc-if>
+    </div>
+  </main>
+</sc-if>
+
+<sc-if value="{{ vQ }}">
+  <main style="flex:1;display:flex;justify-content:center;align-items:{{ L.qAlign }};padding:{{ L.qOuter }}">
+    <div style="width:{{ L.qWidth }};max-width:100%;min-height:{{ L.qMinH }};background:{{ L.qBg }};border:{{ L.qBorder }};border-radius:{{ L.qRadius }};box-shadow:{{ L.qShadow }};display:flex;flex-direction:column">
+      <div style="flex:1;padding:{{ L.qPad }};display:flex;flex-direction:column;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:26px">
+            <span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70;text-transform:uppercase">{{ progLabel }}</span>
+            <sc-if value="{{ pathLabel }}"><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">{{ pathLabel }}</span></sc-if>
+          </div>
+          <div role="progressbar" aria-label="{{ progLabel }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progPct }}" style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:{{ progW }};height:100%;background:#236DAD;border-radius:999px;transition:width .3s ease-out"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 ref="{{ qRef }}" tabIndex="-1" style="font:600 {{ L.qH }}/1.12 'Geist',sans-serif;letter-spacing:-.035em;outline:none">{{ q.q }}</h2>
+          <sc-if value="{{ q.h }}"><p style="font-size:17px;line-height:1.5;color:#4B5D70">{{ q.h }}</p></sc-if>
+        </div>
+
+        <sc-if value="{{ isChoice }}">
+          <div role="radiogroup" aria-label="{{ q.q }}" style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ opts }}" as="o" hint-placeholder-count="2">
+              <button role="radio" aria-checked="{{ o.sel }}" onClick="{{ o.pick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:14px;min-height:{{ o.minH }};padding:{{ o.pad }};background:#fff;border:{{ o.border }};border-radius:20px;box-shadow:{{ o.shadow }};transition:border-color .15s,box-shadow .15s" style-hover="border-color:#4F9EEA" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">
+                <sc-if value="{{ o.sel }}"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span></sc-if>
+                <sc-if value="{{ o.unsel }}" hint-placeholder-val="{{ true }}"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span></sc-if>
+                <span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:18px;font-weight:600">{{ o.l }}</span><sc-if value="{{ o.h }}"><span style="font-size:15px;color:#4B5D70">{{ o.h }}</span></sc-if></span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isYesNo }}">
+          <div role="radiogroup" aria-label="{{ q.q }}" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <sc-for list="{{ opts }}" as="o" hint-placeholder-count="2">
+              <button role="radio" aria-checked="{{ o.sel }}" onClick="{{ o.pick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:18px;min-height:112px;padding:{{ o.pad }};background:#fff;border:{{ o.border }};border-radius:20px;box-shadow:{{ o.shadow }};transition:border-color .15s,box-shadow .15s" style-hover="border-color:#4F9EEA" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">
+                <sc-if value="{{ o.sel }}"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span></sc-if>
+                <sc-if value="{{ o.unsel }}" hint-placeholder-val="{{ true }}"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2"></span></sc-if>
+                <span style="font-size:22px;font-weight:600;letter-spacing:-.02em">{{ o.l }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isNumber }}">
+          <label style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:15px;font-weight:600">{{ q.label }}</span>
+            <span style="position:relative;display:block">
+              <input type="text" inputMode="decimal" autoComplete="off" value="{{ numDraft }}" onChange="{{ onNum }}" onKeyDown="{{ onNumKey }}" aria-invalid="{{ hasErr }}" placeholder="{{ q.ph }}" style="width:100%;height:76px;border-radius:20px;border:2px solid {{ numBorder }};background:#fff;padding:0 72px 0 22px;font:600 34px 'Geist',sans-serif;letter-spacing:-.03em;color:#112D50;font-variant-numeric:tabular-nums;outline:none" style-focus="box-shadow:0 0 0 4px rgba(79,158,234,.25)">
+              <span style="position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:500;color:#4B5D70;pointer-events:none">{{ q.unit }}</span>
+            </span>
+            <sc-if value="{{ noErr }}" hint-placeholder-val="{{ true }}"><span style="font-size:14px;color:#4B5D70">{{ rangeHint }}</span></sc-if>
+            <sc-if value="{{ hasErr }}"><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:15px;font-weight:500;color:#8F1D13"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>{{ err }}</span></sc-if>
+          </label>
+        </sc-if>
+      </div>
+
+      <div style="position:{{ L.ctrlPos }};bottom:0;padding:{{ L.ctrlPad }};background:{{ L.ctrlBg }};border-top:1px solid #E3E9F2;display:flex;justify-content:space-between;gap:12px;border-radius:{{ L.ctrlRadius }}">
+        <button onClick="{{ back }}" disabled="{{ scoring }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:{{ backColor }};display:flex;align-items:center" style-hover="border-color:#112D50" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">← Back</button>
+        <sc-if value="{{ canNext }}">
+          <button onClick="{{ next }}" style="all:unset;box-sizing:border-box;cursor:pointer;flex:{{ L.nextFlex }};height:56px;padding:0 30px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)" style-hover="background:#1B5A90" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">{{ nextLabel }}</button>
+        </sc-if>
+        <sc-if value="{{ cantNext }}" hint-placeholder-val="{{ true }}">
+          <button disabled="{{ true }}" aria-disabled="true" style="all:unset;box-sizing:border-box;flex:{{ L.nextFlex }};height:56px;padding:0 30px;border-radius:999px;background:#E3E9F2;color:#8597AA;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ nextLabel }}</button>
+        </sc-if>
+        <sc-if value="{{ scoring }}">
+          <button disabled="{{ true }}" aria-live="polite" style="all:unset;box-sizing:border-box;flex:{{ L.nextFlex }};height:56px;padding:0 30px;border-radius:999px;background:#236DAD;opacity:.85;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px">{{ spinner }}Scoring…</button>
+        </sc-if>
+      </div>
+    </div>
+  </main>
+</sc-if>
+
+<sc-if value="{{ vResult }}">
+  <main style="flex:1;width:100%;max-width:{{ L.resMax }};margin:0 auto;padding:{{ L.resPad }};display:flex;flex-direction:column;gap:16px;animation:cs-in .35s ease both">
+    <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span><h1 ref="{{ resRef }}" tabIndex="-1" style="font:600 {{ L.resH1 }}/1.1 'Geist',sans-serif;letter-spacing:-.04em;outline:none">Your screening result</h1></div>
+
+    <sc-if value="{{ res.isEmergency }}">
+      <div role="alert" style="background:#B42318;color:#fff;border-radius:28px;padding:28px 24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:center;gap:14px"><span style="width:52px;height:52px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5v.5"></path></svg></span><span style="font:600 13px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1.5px solid rgba(255,255,255,.6);border-radius:999px">Emergency</span></div>
+        <h2 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Your answers describe an emergency.</h2>
+        <p style="font-size:20px;line-height:1.4;font-weight:600">Go to the nearest emergency department now.</p>
+        <p style="font-size:16px;line-height:1.5;color:#FFE3DF">If you can't get there safely, ask someone to take you or call emergency services.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.isUrgent }}">
+      <div role="alert" style="display:flex;flex-direction:column;gap:16px;padding:20px;border-radius:24px;background:#FFF4E3;border:2px solid #E59A2F">
+        <div style="display:flex;gap:14px">
+          <span style="width:40px;height:40px;border-radius:50%;background:#C26A0A;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+          <span style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A4B08">Urgent · get help today</span><span style="font-size:18px;font-weight:600;line-height:1.4;color:#5C3205">Some of your answers need clinical attention today. Please contact a clinic or nurse now.</span></span>
+        </div>
+        <button onClick="{{ openWhatsApp }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:56px;border-radius:999px;background:#112D50;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px" style-hover="background:#236DAD" style-focus="outline:3px solid #4F9EEA;outline-offset:3px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path></svg>Chat with a nurse on WhatsApp</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.notEmergency }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+        <sc-if value="{{ res.lower }}"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#E6F4EC;color:#1E6B47;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>{{ res.eyebrow }}</span></sc-if>
+        <sc-if value="{{ res.higher }}"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;color:#8A4B08;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8M8.5 11.5L12 8l3.5 3.5"></path></svg>{{ res.eyebrow }}</span></sc-if>
+        <h2 style="font:600 26px/1.15 'Geist',sans-serif;letter-spacing:-.03em">{{ res.title }}</h2>
+        <p style="font-size:17px;line-height:1.55;color:#4B5D70">{{ res.summary }}</p>
+        <sc-if value="{{ res.ctaClinic }}">
+          <button onClick="{{ planVisit }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25);margin-top:4px" style-hover="background:#1B5A90" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Plan a clinical screening visit →</button>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.ctaNurse }}">
+      <div style="background:#112D50;color:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#93A3B8">Your reference code</span><span style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font:500 22px 'Geist Mono',monospace;letter-spacing:.04em">{{ rec.ref }}</span><button onClick="{{ copyRef }}" style="all:unset;cursor:pointer;height:36px;padding:0 14px;border-radius:999px;border:1px solid #2E4F78;font-size:13px;font-weight:600;display:flex;align-items:center" style-hover="border-color:#fff" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">{{ copyLabel }}</button></span></div>
+        <button onClick="{{ openWhatsApp }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:56px;border-radius:999px;background:#4F9EEA;color:#0B2240;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px" style-hover="background:#7DB7F0" style-focus="outline:3px solid #fff;outline-offset:3px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path></svg>Chat with a nurse on WhatsApp</button>
+        <span style="display:flex;gap:8px;font-size:14px;line-height:1.45;color:#B5C3D3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="flex:none;margin-top:2px"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Only this code is shared in the message. Your answers stay private.</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.showWhy }}">
+      <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+        <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">{{ res.whyTitle }}</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ res.why }}" as="w" hint-placeholder-count="3">
+            <span style="display:inline-flex;align-items:center;gap:6px;background:{{ w.bg }};border:1px solid {{ w.bd }};color:{{ w.c }};padding:8px 12px;border-radius:999px;font-size:14px;font-weight:{{ w.fw }}">{{ w.f }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.showSteps }}">
+      <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid #E3E9F2">
+        <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Next steps</h3>
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ res.steps }}" as="s" hint-placeholder-count="3">
+            <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">{{ s.n }}</span>{{ s.t }}</li>
+          </sc-for>
+        </ol>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ res.showCode }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#fff;border:1px dashed #A8CCF2"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4B5D70">{{ res.codeLabel }}</span><span style="font:500 18px 'Geist Mono',monospace;letter-spacing:.04em">{{ rec.ref }}</span></span><button onClick="{{ copyRef }}" style="all:unset;cursor:pointer;height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center" style-hover="border-color:#112D50" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">{{ copyLabel }}</button></div>
+    </sc-if>
+
+    <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+  </main>
+</sc-if>
+
+<sc-if value="{{ isNurseShell }}">
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px {{ L.gut }};background:#fff;border-bottom:1px solid #E3E9F2;position:sticky;top:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:14px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><sc-if value="{{ isD }}"><span style="width:1px;height:20px;background:#D6E2F0"></span><span style="font-size:15px;font-weight:600">Diabetes dashboard</span></sc-if></div>
+    <button onClick="{{ signOut }}" style="all:unset;cursor:pointer;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center" style-hover="border-color:#112D50" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Sign out</button>
+  </header>
+</sc-if>
+
+<sc-if value="{{ vLogin }}">
+  <main style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 16px;animation:cs-in .35s ease both">
+    <div style="width:440px;max-width:100%;display:flex;flex-direction:column;gap:20px">
+      <span style="font:700 24px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA;text-align:center">custodia</span>
+      <form onSubmit="{{ login }}" style="background:#fff;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:22px;border:1px solid #E3E9F2;box-shadow:0 24px 60px rgba(17,45,80,.08)">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Nurse access</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Diabetes dashboard</h1></div>
+        <label style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:15px;font-weight:600">Password</span>
+          <span style="position:relative;display:block">
+            <input type="{{ pwType }}" value="{{ pw }}" onChange="{{ onPw }}" autoComplete="current-password" aria-invalid="{{ hasLoginErr }}" disabled="{{ locked }}" style="width:100%;height:52px;border-radius:16px;border:2px solid {{ pwBorder }};background:#fff;padding:0 72px 0 16px;font:500 17px 'Geist',sans-serif;color:#112D50;outline:none" style-focus="box-shadow:0 0 0 4px rgba(79,158,234,.25)">
+            <button type="button" onClick="{{ togglePw }}" style="all:unset;cursor:pointer;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:#236DAD;padding:6px" style-focus="outline:3px solid #4F9EEA;outline-offset:2px">{{ pwToggleLabel }}</button>
+          </span>
+          <sc-if value="{{ hasLoginErr }}"><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:14px;font-weight:500;color:#8F1D13"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>{{ loginErr }}</span></sc-if>
+        </label>
+        <button type="submit" style="all:unset;box-sizing:border-box;cursor:pointer;height:52px;border-radius:999px;background:#236DAD;color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center" style-hover="background:#1B5A90" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Sign in</button>
+        <span style="font-size:13px;color:#4B5D70;text-align:center">Prototype password: <span style="font-family:'Geist Mono',monospace;color:#112D50">nurse</span></span>
+        <p style="font-size:13px;line-height:1.5;color:#4B5D70;padding-top:18px;border-top:1px solid #E3E9F2">This dashboard shows all submitted assessments to authenticated nurses. It does not assign, claim, or filter cases by nurse.</p>
+      </form>
+      <a href="#" onClick="{{ restart }}" style="text-align:center;font-size:15px;font-weight:500">← Return to screening</a>
+    </div>
+  </main>
+</sc-if>
+
+<sc-if value="{{ vDash }}">
+  <main style="flex:1;width:100%;max-width:1280px;margin:0 auto;padding:{{ L.dashPad }};display:flex;flex-direction:column;gap:24px;animation:cs-in .3s ease both">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px 40px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:640px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Shared nurse queue</span><h1 style="font:600 {{ L.dashH1 }}/1.05 'Geist',sans-serif;letter-spacing:-.04em">Assessments</h1><p style="font-size:15px;line-height:1.55;color:#4B5D70">Every submitted assessment is visible here, newest first. High-risk diabetes cases are flagged for follow-up, and red-flag cases are marked urgent or emergency.</p></div>
+      <form onSubmit="{{ doSearch }}" style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;width:{{ L.searchW }}">
+        <label style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:13px;font-weight:600">Search by reference</span>
+          <span style="position:relative;display:block">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5D70" stroke-width="2.4" stroke-linecap="round" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+            <input type="search" value="{{ search }}" onChange="{{ onSearch }}" placeholder="Enter full reference code" aria-invalid="{{ hasSearchErr }}" style="width:100%;height:44px;border-radius:999px;border:2px solid {{ searchBorder }};background:#fff;padding:0 16px 0 42px;font:500 14px 'Geist Mono',monospace;color:#112D50;text-transform:uppercase;outline:none" style-focus="box-shadow:0 0 0 4px rgba(79,158,234,.25)">
+          </span>
+          <sc-if value="{{ hasSearchErr }}"><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:500;color:#8F1D13"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>{{ searchErr }}</span></sc-if>
+        </label>
+        <div style="display:flex;gap:8px;margin-top:22px">
+          <button type="submit" style="all:unset;cursor:pointer;height:44px;padding:0 20px;border-radius:999px;background:#236DAD;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center" style-hover="background:#1B5A90" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Search</button>
+          <sc-if value="{{ showClear }}"><button type="button" onClick="{{ clearSearch }}" style="all:unset;cursor:pointer;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;display:flex;align-items:center" style-hover="border-color:#112D50" style-focus="outline:3px solid #4F9EEA;outline-offset:3px">Clear</button></sc-if>
+        </div>
+      </form>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:{{ L.statGap }}">
+      <div style="background:#fff;border-radius:{{ L.statR }};padding:{{ L.statPad }};border:1px solid #E3E9F2;display:flex;flex-direction:column;gap:6px"><span style="font-size:{{ L.statLbl }};color:#4B5D70">{{ totalLabel }}</span><span style="font:600 {{ L.statNum }}/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">{{ stats.total }}</span></div>
+      <div style="background:#fff;border-radius:{{ L.statR }};padding:{{ L.statPad }};border:1px solid #E3E9F2;display:flex;flex-direction:column;gap:6px"><span style="font-size:{{ L.statLbl }};color:#4B5D70">Diabetes high risk</span><span style="font:600 {{ L.statNum }}/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">{{ stats.high }}</span></div>
+      <div style="background:#fff;border-radius:{{ L.statR }};padding:{{ L.statPad }};border:2px solid {{ stats.urgBorder }};display:flex;flex-direction:column;gap:6px"><span style="font-size:{{ L.statLbl }};color:#4B5D70">Urgent or emergency</span><span style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font:600 {{ L.statNum }}/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">{{ stats.urg }}</span><sc-if value="{{ isD }}"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.04em"><span style="color:#8F1D13">{{ stats.em }} EMERGENCY</span> · <span style="color:#8A4B08">{{ stats.ur }} URGENT</span></span></sc-if></span></div>
+    </div>
+
+    <sc-if value="{{ showTable }}">
+      <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;overflow:auto">
+        <div style="min-width:1000px">
+          <div role="row" style="display:grid;grid-template-columns:{{ cols }};gap:16px;align-items:center;padding:12px 20px 12px 24px;border-bottom:1px solid #E3E9F2;background:#F7FAFE;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><span>Flag</span><span>Urgency</span><span>Submitted</span><span>Reference</span><span>Diabetes status</span><span>Classification</span><span style="text-align:right">Score</span><span>Rule</span><span></span></div>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+            <div role="link" tabIndex="0" onClick="{{ r.open }}" onKeyDown="{{ r.key }}" aria-label="{{ r.aria }}" style="display:grid;grid-template-columns:{{ cols }};gap:16px;align-items:center;padding:{{ r.pad }} 20px;border-bottom:1px solid #E3E9F2;border-left:4px solid {{ r.bar }};background:{{ r.bg }};font-size:14px;cursor:pointer;outline:none" style-hover="background:#EFF2FA" style-focus="box-shadow:inset 0 0 0 3px #4F9EEA">
+              <span><sc-if value="{{ r.flag }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span></sc-if><sc-if value="{{ r.noFlag }}"><span style="color:#8597AA" aria-label="No flag">—</span></sc-if></span>
+              <span>
+                <sc-if value="{{ r.isEm }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#B42318;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5.5px 11px 5.5px 8px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4"></path></svg>EMERGENCY</span></sc-if>
+                <sc-if value="{{ r.isUr }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#FFF4E3;color:#8A4B08;border:1.5px solid #E59A2F;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:4px 10px 4px 7px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>URGENT</span></sc-if>
+                <sc-if value="{{ r.isRo }}"><span style="color:#4B5D70">Routine</span></sc-if>
+              </span>
+              <span style="color:#4B5D70;font-variant-numeric:tabular-nums">{{ r.sub }}</span>
+              <span style="font:500 14px 'Geist Mono',monospace;letter-spacing:.02em">{{ r.ref }}</span>
+              <span style="color:#4B5D70">{{ r.status }}</span>
+              <span style="font-weight:600">{{ r.cls }}</span>
+              <span style="text-align:right;font:500 13px 'Geist Mono',monospace">{{ r.scoreLabel }}</span>
+              <span style="font:500 13px 'Geist Mono',monospace;color:#4B5D70">{{ r.rule }}</span>
+              <span style="color:#236DAD;font-size:18px">›</span>
+            </div>
+          </sc-for>
+          <div style="padding:14px 24px;font-size:13px;color:#4B5D70">{{ showingLabel }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCards }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+          <div role="link" tabIndex="0" onClick="{{ r.open }}" onKeyDown="{{ r.key }}" aria-label="{{ r.aria }}" style="background:{{ r.bg }};border:{{ r.border }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;outline:none" style-focus="box-shadow:0 0 0 3px #4F9EEA">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <span style="display:flex;gap:6px;align-items:center">
+                <sc-if value="{{ r.isEm }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#B42318;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5.5px 11px 5.5px 8px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4"></path></svg>EMERGENCY</span></sc-if>
+                <sc-if value="{{ r.isUr }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#FFF4E3;color:#8A4B08;border:1.5px solid #E59A2F;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:4px 10px 4px 7px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>URGENT</span></sc-if>
+                <sc-if value="{{ r.isRo }}"><span style="font-size:13px;color:#4B5D70">Routine</span></sc-if>
+                <sc-if value="{{ r.flag }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px">FLAG</span></sc-if>
+              </span>
+              <span style="font-size:12px;color:#4B5D70">{{ r.sub }}</span>
+            </div>
+            <span style="font-size:16px;font-weight:600">{{ r.cls }}</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font:500 13px 'Geist Mono',monospace">{{ r.ref }}</span><span style="font-size:13px;color:#4B5D70">{{ r.status }} · {{ r.scoreLabel }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showEmpty }}">
+      <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:56px 32px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+        <span style="width:56px;height:56px;border-radius:18px;background:#DBEBFB;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M4 13h4l2 3h4l2-3h4"></path></svg></span>
+        <h2 style="font:600 22px/1.2 'Geist',sans-serif;letter-spacing:-.02em">No assessments yet</h2>
+        <p style="font-size:15px;line-height:1.55;color:#4B5D70;max-width:380px">New screenings will appear here as soon as they're submitted, newest first.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showNoMatch }}">
+      <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:48px 32px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+        <h2 style="font:600 20px/1.3 'Geist',sans-serif;letter-spacing:-.02em">No assessment matches <span style="font-family:'Geist Mono',monospace;font-weight:500">{{ query }}</span></h2>
+        <p style="font-size:15px;line-height:1.55;color:#4B5D70;max-width:400px">Check each character and try again. Search needs the full reference code.</p>
+        <a href="#" onClick="{{ clearSearch }}" style="font-size:14px;font-weight:600">Clear search and show all</a>
+      </div>
+    </sc-if>
+  </main>
+</sc-if>
+
+<sc-if value="{{ vDetail }}">
+  <main style="flex:1;width:100%;max-width:1280px;margin:0 auto;padding:{{ L.detailPad }};display:flex;flex-direction:column;gap:22px;animation:cs-in .3s ease both">
+    <a href="#" onClick="{{ backToDash }}" style="font-size:14px;font-weight:600;align-self:flex-start">← Back to all assessments</a>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px 24px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Assessment detail</span><h1 style="font:600 {{ L.dashH1 }}/1.05 'Geist',sans-serif;letter-spacing:-.04em">{{ d.cls }}</h1></div>
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;font-size:14px;color:#4B5D70"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px">Reference</span><span style="font:500 15px 'Geist Mono',monospace;color:#112D50">{{ d.ref }}</span></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px">Submitted</span><span style="font-size:15px;font-weight:500;color:#112D50">{{ d.sub }}</span></span><sc-if value="{{ d.flag }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span></sc-if></div>
+    </div>
+    <sc-if value="{{ d.isEm }}">
+      <div role="alert" style="display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:20px;background:#B42318;color:#fff"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5v.5"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase">Emergency</span><span style="font-size:17px;font-weight:600;line-height:1.4">Emergency red flags were reported. This person was told to seek emergency care now.</span></span></div>
+    </sc-if>
+    <sc-if value="{{ d.isUr }}">
+      <div role="alert" style="display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:20px;background:#FFF4E3;border:2px solid #E59A2F"><span style="width:40px;height:40px;border-radius:50%;background:#C26A0A;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A4B08">Urgent</span><span style="font-size:17px;font-weight:600;line-height:1.4;color:#5C3205">Red flags were reported. This person needs same-day clinical review.</span></span></div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:{{ L.detailCols }};gap:20px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:18px">
+          <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Summary</h2>
+          <dl style="margin:0;display:grid;grid-template-columns:{{ L.sumCols }};gap:18px 24px">
+            <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Diabetes status</dt><dd style="margin:0;font-size:16px;font-weight:600">{{ d.status }}</dd></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Classification</dt><dd style="margin:0;font-size:16px;font-weight:600">{{ d.cls }}</dd></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Clinical urgency</dt><dd style="margin:0;font-size:16px;font-weight:600;color:{{ d.urgColor }}">{{ d.urgLabel }}</dd></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Score</dt><dd style="margin:0;font:500 16px 'Geist Mono',monospace">{{ d.scoreText }}</dd></div>
+            <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><dt style="font-size:13px;color:#4B5D70">Reference</dt><dd style="margin:0;font:500 16px 'Geist Mono',monospace;word-break:break-all">{{ d.ref }}</dd></div>
+          </dl>
+        </div>
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:14px">
+          <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Score breakdown</h2>
+          <sc-if value="{{ d.hasFactors }}">
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ d.factors }}" as="f" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid #E3E9F2;font-size:15px"><span>{{ f.f }}</span><sc-if value="{{ f.ov }}"><span style="flex:none;font:600 11px 'Geist Mono',monospace;letter-spacing:.06em;color:{{ f.c }};background:{{ f.bg }};padding:4px 10px;border-radius:999px">{{ f.p }}</span></sc-if><sc-if value="{{ f.pts }}"><span style="flex:none;font:500 14px 'Geist Mono',monospace">{{ f.p }}</span></sc-if></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ d.noFactors }}"><p style="font-size:15px;color:#4B5D70">No contributing factors scored.</p></sc-if>
+        </div>
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:14px">
+          <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Full responses</h2>
+          <sc-if value="{{ d.anon }}">
+            <div style="display:flex;gap:14px;padding:18px;border-radius:18px;background:#F0F7FF;border:1px dashed #A8CCF2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:16px;font-weight:600">Responses anonymized</span><span style="font-size:14px;line-height:1.5;color:#4B5D70">Individual answers for this assessment were removed under the data retention policy. Classification, score and provenance are kept for reporting.</span></span></div>
+          </sc-if>
+          <sc-if value="{{ d.notAnon }}">
+            <div style="display:flex;flex-direction:column">
+              <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:8px 0;border-bottom:1px solid #E3E9F2;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><span>Question</span><span>Answer</span></div>
+              <sc-for list="{{ d.responses }}" as="q" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:11px 0;border-bottom:1px solid #E3E9F2;font-size:15px"><span style="color:#4B5D70">{{ q.q }}</span><span style="font-weight:600">{{ q.a }}</span></div>
+              </sc-for>
+            </div>
+            <details style="border-radius:14px;background:#F7FAFE;border:1px solid #E3E9F2;padding:12px 16px;font-size:14px"><summary style="cursor:pointer;font-weight:600;color:#236DAD">Show raw JSON</summary><pre style="margin:12px 0 0;font:500 12px/1.6 'Geist Mono',monospace;white-space:pre-wrap;word-break:break-all;color:#112D50">{{ d.raw }}</pre></details>
+          </sc-if>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0">
+        <span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70">Provenance</span>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#4B5D70">Rule version</span><span style="font-family:'Geist Mono',monospace">{{ d.rule }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#4B5D70">Questionnaire version</span><span style="font-family:'Geist Mono',monospace">{{ d.qv }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#4B5D70">Ruleset hash</span><span style="font:500 12px/1.5 'Geist Mono',monospace;word-break:break-all;background:#F7FAFE;border-radius:10px;padding:8px 10px">{{ d.hash }}</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+  <div role="status" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:#112D50;color:#fff;padding:12px 18px;border-radius:999px;font-size:14px;font-weight:500;box-shadow:0 12px 30px rgba(17,45,80,.25);max-width:calc(100% - 32px);text-align:center">{{ toast }}</div>
+</sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;queueDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;'comfortable'|'compact'&quot;,&quot;section&quot;:&quot;Nurse queue&quot;},&quot;urgencyRowTint&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Nurse queue&quot;},&quot;emptyQueue&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Nurse queue&quot;}}">
+class Component extends DCLogic {
+  KEY = 'custodia-screening-proto-subs';
+  HASH = 'sha256:9f2c4e1a7b03d8e65c1f0a9b44d2e7c813a6f05b92de4c7a1e8f3b06d5c29a47';
+  BRANCH = { id: 'diagnosed', type: 'choice', q: 'Do you already have diabetes?', opts: [['no', "No / I'm not sure", 'Check my diabetes risk'], ['yes', 'Yes, I have diabetes', 'Check for possible complications']] };
+  A = [
+    { id: 'age', type: 'number', q: 'How old are you?', label: 'Age', unit: 'years', min: 18, max: 110, ph: 'e.g. 45' },
+    { id: 'height', type: 'number', q: 'How tall are you?', h: 'An estimate is fine.', label: 'Height', unit: 'cm', min: 100, max: 250, ph: 'e.g. 168' },
+    { id: 'weight', type: 'number', q: 'How much do you weigh?', h: 'An estimate is fine.', label: 'Weight', unit: 'kg', min: 30, max: 250, ph: 'e.g. 72' },
+    { id: 'sex', type: 'choice', q: 'What sex were you assigned at birth?', h: 'This changes how waist size is scored.', opts: [['female', 'Female'], ['male', 'Male']] },
+    { id: 'waist', type: 'number', q: 'What is your waist size?', h: 'Measure around your belly, level with your belly button. An estimate is fine.', label: 'Waist', unit: 'cm', min: 50, max: 200, ph: 'e.g. 90' },
+    { id: 'activity', type: 'yesno', q: 'Do you get at least 30 minutes of physical activity most days?', h: 'This includes walking, work that keeps you moving, or exercise.' },
+    { id: 'veg', type: 'yesno', q: 'Do you eat vegetables or fruit every day?' },
+    { id: 'bpmed', type: 'yesno', q: 'Have you ever taken medicine for high blood pressure?' },
+    { id: 'glucose', type: 'yesno', q: 'Have you ever been told your blood sugar was high?', h: 'For example at a check-up, during an illness or in pregnancy.' },
+    { id: 'family', type: 'choice', q: 'Has anyone in your family been diagnosed with diabetes?', opts: [['no', 'No'], ['ext', 'Yes, extended family', 'Grandparent, aunt, uncle, cousin'], ['close', 'Yes, close family', 'Parent, brother, sister, child']] },
+  ];
+  B = [
+    { id: 'foot', type: 'yesno', q: 'Do you have a wound or sore on your foot that is not healing?', h: 'This includes a blister, cut or ulcer that has lasted more than a week.' },
+    { id: 'vision', type: 'yesno', q: 'Have you had sudden vision loss or blurry vision?' },
+    { id: 'dka', type: 'yesno', q: 'Do you have nausea, vomiting, fast breathing or confusion right now?' },
+    { id: 'chest', type: 'yesno', q: 'Do you have chest pain or trouble breathing right now?' },
+    { id: 'hba1c', type: 'choice', q: 'What was your most recent HbA1c result?', h: 'HbA1c is a blood test that shows your average sugar level over 3 months.', opts: [['lt7', 'Below 7%'], ['7to9', '7% to 9%'], ['gt9', 'Above 9%'], ['unknown', "I don't know"]] },
+    { id: 'highlow', type: 'choice', q: 'How often do you have very high or very low blood sugar?', opts: [['rare', 'Rarely or never'], ['monthly', 'Once or twice a month'], ['weekly', 'Every week']] },
+    { id: 'duration', type: 'choice', q: 'How long have you had diabetes?', opts: [['lt5', 'Less than 5 years'], ['5to10', '5 to 10 years'], ['gt10', 'More than 10 years']] },
+    { id: 'bp', type: 'choice', q: 'Is your blood pressure under control?', opts: [['yes', 'Yes'], ['no', 'No'], ['unknown', "I don't know"]] },
+    { id: 'smoke', type: 'choice', q: 'Do you smoke?', opts: [['never', 'Never'], ['former', 'I used to'], ['current', 'Yes, I smoke now']] },
+    { id: 'neuro', type: 'yesno', q: 'Do you have numbness, tingling or burning in your feet?' },
+    { id: 'retino', type: 'yesno', q: 'Has a health worker told you diabetes is affecting your eyes?' },
+    { id: 'nephro', type: 'yesno', q: 'Has a health worker told you diabetes is affecting your kidneys?' },
+    { id: 'adherence', type: 'choice', q: 'How often do you miss your diabetes medicine?', opts: [['rare', 'Rarely or never'], ['few', 'A few times a month'], ['most', 'Most weeks']] },
+    { id: 'checkup', type: 'choice', q: 'When did you last have a diabetes check-up?', opts: [['lt6', 'In the last 6 months'], ['6to12', '6 to 12 months ago'], ['gt12', 'More than a year ago'], ['never', "Never, or I'm not sure"]] },
+  ];
+
+  state = { view: 'intro', consent: false, step: 0, ans: {}, numDraft: '', err: '', scoring: false, rec: null, subs: [], w: 1280, copied: false, toast: '', pw: '', showPw: false, loginErr: '', fails: 0, search: '', query: '', searchErr: '', detailRef: null };
+  qRef = React.createRef();
+  resRef = React.createRef();
+
+  componentDidMount() {
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onResize();
+    window.addEventListener('resize', this.onResize);
+    let subs = [];
+    try { subs = JSON.parse(localStorage.getItem(this.KEY) || '[]'); } catch (e) {}
+    const v = new URLSearchParams(location.search).get('view');
+    this.setState({ subs, view: v === 'nurse' ? 'login' : v === 'dash' ? 'dash' : 'intro' });
+    window.__screening = this;
+  }
+  demo(k) {
+    const A = { diagnosed: 'no', age: 52, height: 168, weight: 84, sex: 'male', waist: 106, activity: 'no', veg: 'yes', bpmed: 'yes', glucose: 'yes', family: 'close' };
+    const Al = { diagnosed: 'no', age: 34, height: 170, weight: 64, sex: 'female', waist: 76, activity: 'yes', veg: 'yes', bpmed: 'no', glucose: 'no', family: 'no' };
+    const B = { diagnosed: 'yes', foot: 'yes', vision: 'no', dka: 'no', chest: 'no', hba1c: 'gt9', highlow: 'monthly', duration: 'gt10', bp: 'no', smoke: 'former', neuro: 'yes', retino: 'no', nephro: 'no', adherence: 'few', checkup: 'gt12' };
+    const S = {
+      intro: { view: 'intro', consent: true },
+      branch: { view: 'q', step: 0, ans: { diagnosed: 'yes' }, err: '' },
+      yesno: { view: 'q', step: 1, ans: { diagnosed: 'yes' }, err: '' },
+      number: { view: 'q', step: 2, ans: { diagnosed: 'no', age: 52 }, numDraft: '168', err: '' },
+      error: { view: 'q', step: 5, ans: { diagnosed: 'no' }, numDraft: '9', err: 'Enter a number between 50 and 200 cm' },
+      'result-lower': { view: 'result', rec: this.score(Al) },
+      'result-higher': { view: 'result', rec: this.score(A) },
+      'result-urgent': { view: 'result', rec: this.score(B) },
+      'result-emergency': { view: 'result', rec: this.score({ ...B, chest: 'yes' }) },
+      login: { view: 'login', pw: '', loginErr: '' },
+      dash: { view: 'dash', query: '', search: '' },
+      detail: { view: 'detail', detailRef: 'KYR-7F3K-92QD' },
+    };
+    this.setState({ scoring: false, copied: false, ...S[k] });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearTimeout(this.t); clearTimeout(this.tt); }
+  componentDidUpdate(pp, ps) {
+    const s = this.state;
+    if (ps.view !== s.view) window.scrollTo(0, 0);
+    if (s.view === 'q' && (ps.step !== s.step || ps.view !== 'q') && this.qRef.current) this.qRef.current.focus({ preventScroll: true });
+    if (s.view === 'result' && ps.view !== 'result' && this.resRef.current) this.resRef.current.focus({ preventScroll: true });
+  }
+
+  path(ans) { return ans.diagnosed === 'yes' ? this.B : this.A; }
+  qAt(step, ans) { return step === 0 ? this.BRANCH : this.path(ans)[step - 1]; }
+  showToast(t) { clearTimeout(this.tt); this.setState({ toast: t }); this.tt = setTimeout(() => this.setState({ toast: '' }), 2600); }
+
+  goStep(k, ans) {
+    const q = this.qAt(k, ans);
+    this.setState({ step: k, ans, err: '', numDraft: q.type === 'number' && ans[q.id] != null ? String(ans[q.id]) : '' });
+  }
+  pick(v) {
+    const s = this.state, q = this.qAt(s.step, s.ans);
+    let ans = { ...s.ans, [q.id]: v };
+    if (q.id === 'diagnosed' && s.ans.diagnosed && s.ans.diagnosed !== v) ans = { diagnosed: v };
+    this.setState({ ans });
+    clearTimeout(this.t);
+    if (q.type === 'yesno') this.t = setTimeout(() => this.next(), 250);
+  }
+  next() {
+    const s = this.state; if (s.scoring) return;
+    const q = this.qAt(s.step, s.ans);
+    const ans = { ...s.ans };
+    if (q.type === 'number') {
+      const n = parseFloat(s.numDraft);
+      if (isNaN(n) || n < q.min || n > q.max) { this.setState({ err: `Enter a number between ${q.min} and ${q.max} ${q.unit}` }); return; }
+      ans[q.id] = n;
+    } else if (ans[q.id] == null) return;
+    const total = this.path(ans).length;
+    if (s.step >= total) { this.submit(ans); return; }
+    this.goStep(s.step + 1, ans);
+  }
+  back() {
+    const s = this.state; if (s.scoring) return;
+    clearTimeout(this.t);
+    if (s.step === 0) this.setState({ view: 'intro' }); else this.goStep(s.step - 1, s.ans);
+  }
+  submit(ans) {
+    this.setState({ ans, scoring: true });
+    setTimeout(() => {
+      const rec = this.score(ans);
+      const subs = [rec, ...this.state.subs];
+      try { localStorage.setItem(this.KEY, JSON.stringify(subs.slice(0, 30))); } catch (e) {}
+      this.setState({ scoring: false, view: 'result', rec, subs, copied: false });
+    }, 1200);
+  }
+  makeRef() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const r = () => Array.from({ length: 4 }, () => c[Math.floor(Math.random() * c.length)]).join(''); return `KYR-${r()}-${r()}`; }
+  display(q, v) {
+    if (v == null) return '—';
+    if (q.type === 'number') return `${v} ${q.unit}`;
+    if (q.type === 'yesno') return v === 'yes' ? 'Yes' : 'No';
+    const o = q.opts.find(o => o[0] === v); return o ? o[1] : v;
+  }
+  score(ans) {
+    const diag = ans.diagnosed === 'yes';
+    const F = []; let score = 0; let urg = 'routine';
+    const add = (f, p) => { F.push({ f, p: '+' + p }); score += p; };
+    if (!diag) {
+      const a = ans.age; if (a >= 65) add('Age 65 or over', 4); else if (a >= 55) add('Age 55–64', 3); else if (a >= 45) add('Age 45–54', 2);
+      const bmi = ans.weight / Math.pow(ans.height / 100, 2); if (bmi > 30) add('BMI over 30', 3); else if (bmi >= 25) add('BMI 25–30', 1);
+      const w = ans.waist, f = ans.sex === 'female';
+      if (w > (f ? 88 : 102)) add(`Waist over ${f ? 88 : 102} cm`, 4); else if (w >= (f ? 80 : 94)) add(`Waist ${f ? '80–88' : '94–102'} cm`, 3);
+      if (ans.activity === 'no') add('Less than 30 min activity a day', 2);
+      if (ans.veg === 'no') add('No daily vegetables or fruit', 1);
+      if (ans.bpmed === 'yes') add('Blood pressure medication', 2);
+      if (ans.glucose === 'yes') add('Past high blood glucose', 5);
+      if (ans.family === 'close') add('Close family history', 5); else if (ans.family === 'ext') add('Extended family history', 3);
+    } else {
+      const ov = [];
+      if (ans.chest === 'yes') { ov.push({ f: 'Chest pain or trouble breathing', p: 'EMERGENCY OVERRIDE', em: true }); urg = 'emergency'; }
+      if (ans.dka === 'yes') { ov.push({ f: 'Nausea, vomiting, fast breathing or confusion', p: 'EMERGENCY OVERRIDE', em: true }); urg = 'emergency'; }
+      if (ans.foot === 'yes') { ov.push({ f: 'Foot wound not healing', p: 'URGENT OVERRIDE' }); if (urg !== 'emergency') urg = 'urgent'; }
+      if (ans.vision === 'yes') { ov.push({ f: 'Sudden vision loss or blurry vision', p: 'URGENT OVERRIDE' }); if (urg !== 'emergency') urg = 'urgent'; }
+      F.push(...ov);
+      ({ gt9: () => add('HbA1c above 9%', 12), '7to9': () => add('HbA1c 7–9%', 6), unknown: () => add('HbA1c unknown', 4) }[ans.hba1c] || (() => {}))();
+      if (ans.highlow === 'weekly') add('Weekly very high or low sugar', 8); else if (ans.highlow === 'monthly') add('Monthly very high or low sugar', 4);
+      if (ans.duration === 'gt10') add('Diabetes for more than 10 years', 8); else if (ans.duration === '5to10') add('Diabetes for 5–10 years', 4);
+      if (ans.bp === 'no') add('Blood pressure not controlled', 6); else if (ans.bp === 'unknown') add('Blood pressure unknown', 2);
+      if (ans.smoke === 'current') add('Smokes now', 6); else if (ans.smoke === 'former') add('Former smoker', 2);
+      if (ans.neuro === 'yes') add('Numb or tingling feet', 10);
+      if (ans.retino === 'yes') add('Eye changes reported', 8);
+      if (ans.nephro === 'yes') add('Kidney changes reported', 8);
+      if (ans.adherence === 'most') add('Misses medicine most weeks', 6); else if (ans.adherence === 'few') add('Misses medicine a few times a month', 3);
+      if (ans.checkup === 'never') add('No check-up on record', 6); else if (ans.checkup === 'gt12') add('Last check-up over a year ago', 4); else if (ans.checkup === '6to12') add('Last check-up 6–12 months ago', 2);
+    }
+    const high = diag ? (score >= 24 || urg !== 'routine') : score >= 12;
+    const cls = diag ? (high ? 'Higher complication risk' : 'Lower complication risk') : (high ? 'Higher diabetes risk' : 'Lower diabetes risk');
+    const qs = [this.BRANCH, ...this.path(ans)];
+    const now = new Date();
+    const sub = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    return { ref: this.makeRef(), sub, diag, status: diag ? 'Diagnosed' : 'Not diagnosed', cls, high, urg, flag: diag && high, score, factors: F, responses: qs.map(q => ({ q: q.q, a: this.display(q, ans[q.id]) })), raw: ans, rule: 'v2.3', qv: 'q-2026.10', fresh: true };
+  }
+
+  seeds() {
+    const rB = (o = {}) => [['Do you already have diabetes?', 'Yes, I have diabetes'], ['Foot wound not healing', o.foot || 'No'], ['Sudden vision loss or blurry vision', o.vision || 'No'], ['Nausea, vomiting, fast breathing or confusion', 'No'], ['Chest pain or trouble breathing', o.chest || 'No'], ['Most recent HbA1c', o.hba1c || '7% to 9%'], ['How long you have had diabetes', o.dur || '5 to 10 years'], ['Last diabetes check-up', '6 to 12 months ago']].map(([q, a]) => ({ q, a }));
+    const rA = (o = {}) => [['Do you already have diabetes?', "No / I'm not sure"], ['Age', o.age || '52 years'], ['Waist', o.waist || '96 cm'], ['Close or extended family history', o.fam || 'Yes, close family'], ['Ever told blood sugar was high', o.glu || 'Yes']].map(([q, a]) => ({ q, a }));
+    const mk = (urg, flag, sub, ref, diag, cls, score, factors, responses, anon) => ({ urg, flag, sub, ref, diag, status: diag ? 'Diagnosed' : 'Not diagnosed', cls, score, factors: factors.map(([f, p, em]) => ({ f, p, em })), responses, anon, raw: anon ? null : Object.fromEntries(responses.map(r => [r.q, r.a])), rule: ref === 'KYR-1D7R-90GM' ? 'v2.2' : 'v2.3', qv: 'q-2026.10' });
+    return [
+      mk('emergency', true, '14 Nov 2026 · 09:42', 'KYR-7F3K-92QD', true, 'Higher complication risk', 36, [['Chest pain or trouble breathing', 'EMERGENCY OVERRIDE', 1], ['Foot wound not healing', 'URGENT OVERRIDE'], ['HbA1c above 9%', '+12'], ['Numb or tingling feet', '+10'], ['Diabetes for more than 10 years', '+8'], ['Misses medicine most weeks', '+6']], rB({ foot: 'Yes', chest: 'Yes', hba1c: 'Above 9%', dur: 'More than 10 years' })),
+      mk('urgent', true, '14 Nov 2026 · 09:15', 'KYR-2M8C-41PA', true, 'Higher complication risk', 22, [['Foot wound not healing', 'URGENT OVERRIDE'], ['HbA1c above 9%', '+12'], ['Numb or tingling feet', '+10']], rB({ foot: 'Yes', hba1c: 'Above 9%' })),
+      mk('routine', true, '14 Nov 2026 · 08:51', 'KYR-9Q4T-07LX', true, 'Higher complication risk', 30, [['HbA1c above 9%', '+12'], ['Eye changes reported', '+8'], ['Blood pressure not controlled', '+6'], ['Last check-up over a year ago', '+4']], rB({ hba1c: 'Above 9%' })),
+      mk('routine', false, '14 Nov 2026 · 08:30', 'KYR-5H1V-88RD', false, 'Higher diabetes risk', 17, [['Close family history', '+5'], ['Past high blood glucose', '+5'], ['Waist over 102 cm', '+4'], ['Age 45–54', '+2'], ['BMI 25–30', '+1']], rA({ waist: '106 cm' })),
+      mk('emergency', true, '13 Nov 2026 · 22:10', 'KYR-4T9E-30HB', true, 'Higher complication risk', 18, [['Nausea, vomiting, fast breathing or confusion', 'EMERGENCY OVERRIDE', 1], ['HbA1c unknown', '+4'], ['Smokes now', '+6'], ['Diabetes for more than 10 years', '+8']], rB({ hba1c: "I don't know", dur: 'More than 10 years' })),
+      mk('routine', false, '13 Nov 2026 · 21:04', 'KYR-3B6N-25WE', false, 'Lower diabetes risk', 6, [['Extended family history', '+3'], ['Age 45–54', '+2'], ['BMI 25–30', '+1']], rA({ fam: 'Yes, extended family', glu: 'No', waist: '82 cm' })),
+      mk('urgent', true, '13 Nov 2026 · 18:47', 'KYR-8K2F-63JS', true, 'Higher complication risk', 14, [['Sudden vision loss or blurry vision', 'URGENT OVERRIDE'], ['Eye changes reported', '+8'], ['Former smoker', '+2'], ['HbA1c 7–9%', '+6']], rB({ vision: 'Yes' })),
+      mk('routine', false, '2 Feb 2025 · 16:12', 'KYR-1D7R-90GM', true, 'Lower complication risk', 12, [['HbA1c 7–9%', '+6'], ['Diabetes for 5–10 years', '+4'], ['Last check-up 6–12 months ago', '+2']], [], true),
+    ];
+  }
+
+  resultView(r) {
+    if (!r) return {};
+    const em = r.urg === 'emergency', ur = r.urg === 'urgent';
+    const why = r.factors.filter(f => !f.p.startsWith('+') || true).slice(0, 6).map(f => {
+      const ov = !f.p.startsWith('+');
+      return { f: f.f, bg: ov ? (f.em ? '#FDEDEB' : '#FFF4E3') : '#F0F7FF', bd: ov ? (f.em ? '#F1B5AE' : '#E59A2F') : '#D6E2F0', c: ov ? (f.em ? '#8F1D13' : '#5C3205') : '#112D50', fw: ov ? '600' : '500' };
+    });
+    const steps = (arr) => arr.map((t, i) => ({ n: i + 1, t }));
+    let v;
+    if (!r.diag && !r.high) v = { eyebrow: 'Lower diabetes risk', title: 'Your answers suggest a lower risk right now', summary: "That's good news. Small daily habits help keep it that way.", steps: steps(['Eat healthy meals with plenty of vegetables.', 'Aim for at least 30 minutes of activity most days.', 'Keep to a healthy weight.', 'Screen again in a year, or sooner if things change.']) };
+    else if (!r.diag) v = { eyebrow: 'Higher diabetes risk', title: 'Please arrange clinical screening', summary: 'Your answers suggest an elevated risk of diabetes. A hospital, clinic or pharmacy can check your blood glucose with a quick test.', ctaClinic: true, steps: steps(['Ask for a blood glucose or HbA1c test in the next few weeks.', 'Bring your reference code so staff can see this screening.']) };
+    else if (!r.high) v = { eyebrow: 'Lower complication risk', title: 'Your answers suggest lower complication risk right now', summary: 'Keep up your routine care. It protects you over the long term.', steps: steps(['Keep taking your medication as prescribed.', 'Check your blood glucose as your care plan says.', 'Protect your feet, eyes, kidneys and blood pressure with regular check-ups.', 'Keep meals steady and stay active.']) };
+    else v = { eyebrow: 'Higher complication risk', title: 'Your answers suggest higher complication risk', summary: 'You may need timely support for diabetes-related symptoms or possible complications. A nurse can help you decide what to do next.', ctaNurse: !ur && !em, steps: steps(['Message a nurse today with your reference code.', 'Keep taking your medication as prescribed.']) };
+    return {
+      ...v, isEmergency: em, isUrgent: ur, notEmergency: !em,
+      lower: !r.high, higher: r.high,
+      why, showWhy: r.high && why.length > 0, whyTitle: em ? "Why you're seeing this" : 'Why this result appeared',
+      showSteps: !em && !ur, ctaNurse: !!v.ctaNurse, ctaClinic: !!v.ctaClinic,
+      showCode: !v.ctaNurse, codeLabel: em ? 'Show this code to staff' : 'Your reference code',
+    };
+  }
+
+  renderVals() {
+    const s = this.state, p = this.props;
+    const m = s.w < 760;
+    const L = {
+      hdrOuter: m ? '0' : '14px 40px 0', hdrOuterBg: m ? '#F0F7FF' : 'transparent', hdrPad: m ? '14px 20px' : '10px 10px 10px 22px', hdrBg: m ? '#F0F7FF' : '#fff', hdrBorder: m ? '0' : '1px solid rgba(0,0,0,.06)', hdrRadius: m ? '0' : '999px', hdrShadow: m ? 'none' : '0 8px 30px rgba(0,0,0,.06)',
+      introPad: m ? '28px 20px 16px' : '64px 40px 32px', introCols: m ? '1fr' : 'minmax(0,1.15fr) minmax(0,1fr)', introGap: m ? '28px' : '72px', introH1: m ? '46px' : '80px', introH1b: m ? '30px' : '48px', introP: m ? '18px' : '20px', introCardR: m ? '24px' : '32px', introCardPad: m ? '20px' : '32px', footPad: m ? '8px 20px 32px' : '16px 40px 40px',
+      qAlign: m ? 'stretch' : 'center', qOuter: m ? '0' : '32px 40px 56px', qWidth: m ? '100%' : '640px', qMinH: m ? 'calc(100vh - 68px)' : 'auto', qBg: m ? 'transparent' : '#fff', qBorder: m ? '0' : '1px solid #E3E9F2', qRadius: m ? '0' : '32px', qShadow: m ? 'none' : '0 24px 60px rgba(17,45,80,.08)', qPad: m ? '16px 20px 28px' : '40px 40px 28px', qH: m ? '30px' : '36px',
+      ctrlPos: m ? 'sticky' : 'static', ctrlPad: m ? '16px 20px 24px' : '20px 40px 28px', ctrlBg: m ? '#F0F7FF' : 'transparent', ctrlRadius: m ? '0' : '0 0 32px 32px', nextFlex: m ? '1' : '0 0 auto',
+      resMax: m ? '100%' : '720px', resPad: m ? '16px 20px 40px' : '40px 40px 64px', resH1: m ? '30px' : '40px',
+      gut: m ? '16px' : '32px', dashPad: m ? '24px 16px 40px' : '36px 32px 48px', dashH1: m ? '30px' : '40px', searchW: m ? '100%' : '480px',
+      statGap: m ? '8px' : '16px', statR: m ? '16px' : '24px', statPad: m ? '12px' : '22px 24px', statNum: m ? '24px' : '40px', statLbl: m ? '12px' : '14px',
+      detailPad: m ? '20px 16px 40px' : '28px 32px 48px', detailCols: m ? 'minmax(0,1fr)' : 'minmax(0,1fr) 340px', sumCols: m ? 'repeat(2,minmax(0,1fr))' : 'repeat(3,minmax(0,1fr))',
+    };
+    const view = s.view;
+    const out = { L, isM: m, isD: !m, isPublic: ['intro', 'q', 'result'].includes(view), isNurseShell: ['dash', 'detail'].includes(view), vIntro: view === 'intro', vQ: view === 'q', vResult: view === 'result', notResult: view !== 'result', vLogin: view === 'login', vDash: view === 'dash', vDetail: view === 'detail', toast: s.toast };
+
+    out.consent = s.consent; out.noConsent = !s.consent;
+    out.consentBorder = s.consent ? '2px solid #236DAD' : '1.5px solid #D6E2F0';
+    out.toggleConsent = () => this.setState(x => ({ consent: !x.consent }));
+    out.start = () => this.setState({ view: 'q', step: 0, ans: {}, numDraft: '', err: '' });
+    out.restart = (e) => { e && e.preventDefault && e.preventDefault(); this.setState({ view: 'intro', ans: {}, step: 0, rec: null, consent: false, numDraft: '', err: '', copied: false }); };
+
+    if (view === 'q') {
+      const q = this.qAt(s.step, s.ans);
+      const total = s.step === 0 ? null : this.path(s.ans).length + 1;
+      out.q = q;
+      out.progLabel = total ? `Question ${s.step + 1} of ${total}` : 'Question 1';
+      const pct = total ? Math.round(((s.step + 1) / total) * 100) : 6;
+      out.progPct = pct; out.progW = pct + '%';
+      out.pathLabel = s.step === 0 ? '' : (s.ans.diagnosed === 'yes' ? 'Diagnosed pathway' : 'Risk estimate pathway');
+      out.isChoice = q.type === 'choice'; out.isYesNo = q.type === 'yesno'; out.isNumber = q.type === 'number';
+      const raw = q.type === 'yesno' ? [['yes', 'Yes'], ['no', 'No']] : (q.opts || []);
+      out.opts = raw.map(([v, l, h]) => { const sel = s.ans[q.id] === v; return { l, h: h || '', sel, unsel: !sel, minH: h ? '84px' : '64px', pad: sel ? '15.5px 17.5px' : '16px 18px', border: sel ? '2px solid #236DAD' : '1.5px solid #D6E2F0', shadow: sel ? '0 6px 18px rgba(35,109,173,.14)' : 'none', pick: () => this.pick(v) }; });
+      out.numDraft = s.numDraft; out.err = s.err; out.hasErr = !!s.err; out.noErr = !s.err;
+      out.numBorder = s.err ? '#B42318' : '#D6E2F0';
+      out.rangeHint = q.type === 'number' ? `Between ${q.min} and ${q.max} ${q.unit}` : '';
+      out.onNum = (e) => this.setState({ numDraft: e.target.value.replace(/[^0-9.]/g, ''), err: '' });
+      out.onNumKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.next(); } };
+      const answered = q.type === 'number' ? s.numDraft.trim() !== '' : s.ans[q.id] != null;
+      out.scoring = s.scoring; out.canNext = answered && !s.scoring; out.cantNext = !answered && !s.scoring;
+      out.nextLabel = total && s.step === total - 1 ? 'See my result' : 'Next →';
+      out.backColor = s.scoring ? '#8597AA' : '#112D50';
+      out.next = () => this.next(); out.back = () => this.back();
+      out.qRef = this.qRef;
+      out.spinner = React.createElement('span', { style: { width: 18, height: 18, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,.35)', borderTopColor: '#fff', animation: 'cs-spin .8s linear infinite' } });
+    }
+
+    if (view === 'result') {
+      out.rec = s.rec || {}; out.res = this.resultView(s.rec); out.resRef = this.resRef;
+      out.copyLabel = s.copied ? 'Copied' : 'Copy';
+      out.copyRef = () => { try { navigator.clipboard.writeText(s.rec.ref); } catch (e) {} this.setState({ copied: true }); this.showToast('Reference code copied'); };
+      out.openWhatsApp = () => { window.open('https://wa.me/?text=' + encodeURIComponent('Hello, my screening reference is ' + s.rec.ref), '_blank'); };
+      out.planVisit = () => this.showToast('Opens your clinic or pharmacy booking link (configure before launch).');
+    }
+
+    if (view === 'login') {
+      const locked = s.fails >= 5;
+      out.pw = s.pw; out.pwType = s.showPw ? 'text' : 'password'; out.pwToggleLabel = s.showPw ? 'Hide' : 'Show';
+      out.loginErr = s.loginErr; out.hasLoginErr = !!s.loginErr; out.locked = locked;
+      out.pwBorder = s.loginErr ? '#B42318' : '#D6E2F0';
+      out.onPw = (e) => this.setState({ pw: e.target.value, loginErr: locked ? s.loginErr : '' });
+      out.togglePw = () => this.setState(x => ({ showPw: !x.showPw }));
+      out.login = (e) => {
+        e.preventDefault();
+        if (locked) return;
+        if (!s.pw) return this.setState({ loginErr: 'Enter your password.' });
+        if (s.pw !== 'nurse') { const f = s.fails + 1; return this.setState({ fails: f, loginErr: f >= 5 ? 'Too many attempts. Try again in 15 minutes.' : "That password isn't right. Try again." }); }
+        this.setState({ view: 'dash', pw: '', loginErr: '', fails: 0 });
+      };
+    }
+
+    out.signOut = () => this.setState({ view: 'login', query: '', search: '', searchErr: '' });
+
+    if (view === 'dash' || view === 'detail') {
+      const compact = (p.queueDensity ?? 'comfortable') === 'compact';
+      const tint = p.urgencyRowTint ?? true;
+      const all = p.emptyQueue ? [] : [...s.subs, ...this.seeds()];
+      const list = s.query ? all.filter(r => r.ref === s.query) : all;
+      const ur = all.filter(r => r.urg === 'urgent').length, em = all.filter(r => r.urg === 'emergency').length;
+      const base = s.query ? list : all;
+      out.stats = { total: base.length, high: base.filter(r => r.flag || (!r.diag && r.cls === 'Higher diabetes risk')).length, urg: base.filter(r => r.urg !== 'routine').length, ur: base.filter(r => r.urg === 'urgent').length, em: base.filter(r => r.urg === 'emergency').length, urgBorder: (ur + em) ? '#E59A2F' : '#E3E9F2' };
+      out.totalLabel = s.query ? 'Matching assessments' : 'Total assessments';
+      out.rows = list.map(r => ({
+        ...r, isEm: r.urg === 'emergency', isUr: r.urg === 'urgent', isRo: r.urg === 'routine', noFlag: !r.flag,
+        scoreLabel: r.urg !== 'routine' ? 'Override' : String(r.score),
+        bg: tint ? (r.urg === 'emergency' ? '#FDEDEB' : r.urg === 'urgent' ? '#FFF7EA' : '#fff') : '#fff',
+        bar: r.urg === 'emergency' ? '#B42318' : r.urg === 'urgent' ? '#E59A2F' : 'transparent',
+        border: r.urg === 'emergency' ? '2px solid #B42318' : r.urg === 'urgent' ? '2px solid #E59A2F' : '1px solid #E3E9F2',
+        pad: compact ? '9px' : '15px',
+        aria: `${r.urg === 'routine' ? 'Routine' : r.urg}, ${r.flag ? 'flagged, ' : ''}${r.cls}, ${r.ref}`,
+        open: () => this.setState({ view: 'detail', detailRef: r.ref }),
+        key: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ view: 'detail', detailRef: r.ref }); } },
+      }));
+      out.cols = '64px 128px 160px 150px 120px minmax(0,1fr) 70px 50px 16px';
+      out.showTable = !m && list.length > 0; out.showCards = m && list.length > 0;
+      out.showEmpty = all.length === 0; out.showNoMatch = !!s.query && list.length === 0 && all.length > 0;
+      out.showingLabel = `Showing ${list.length} of ${list.length}`;
+      out.query = s.query; out.search = s.search; out.searchErr = s.searchErr; out.hasSearchErr = !!s.searchErr;
+      out.searchBorder = s.searchErr ? '#B42318' : '#D6E2F0';
+      out.showClear = !!(s.query || s.search);
+      out.onSearch = (e) => this.setState({ search: e.target.value, searchErr: '' });
+      out.doSearch = (e) => {
+        e.preventDefault();
+        const v = s.search.trim().toUpperCase();
+        if (!v) return this.setState({ searchErr: 'Enter a reference code to search.' });
+        if (!/^KYR-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(v)) return this.setState({ searchErr: 'Enter the full code, e.g. KYR-7F3K-92QD' });
+        this.setState({ query: v, searchErr: '' });
+      };
+      out.clearSearch = (e) => { e && e.preventDefault && e.preventDefault(); this.setState({ search: '', query: '', searchErr: '' }); };
+      out.backToDash = (e) => { e.preventDefault(); this.setState({ view: 'dash' }); };
+
+      if (view === 'detail') {
+        const r = all.find(x => x.ref === s.detailRef) || all[0] || {};
+        const factors = (r.factors || []).map(f => { const ov = !String(f.p).startsWith('+'); return { ...f, ov, pts: !ov, c: f.em ? '#fff' : '#8A4B08', bg: f.em ? '#B42318' : '#FFF4E3' }; });
+        out.d = {
+          ...r, isEm: r.urg === 'emergency', isUr: r.urg === 'urgent',
+          urgLabel: r.urg === 'emergency' ? 'Emergency' : r.urg === 'urgent' ? 'Urgent' : 'Routine',
+          urgColor: r.urg === 'emergency' ? '#8F1D13' : r.urg === 'urgent' ? '#8A4B08' : '#112D50',
+          scoreText: r.urg !== 'routine' ? `${r.score} · overridden` : String(r.score),
+          factors, hasFactors: factors.length > 0, noFactors: factors.length === 0,
+          anon: !!r.anon, notAnon: !r.anon, raw: r.raw ? JSON.stringify(r.raw, null, 2) : '', hash: this.HASH,
+        };
+      }
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

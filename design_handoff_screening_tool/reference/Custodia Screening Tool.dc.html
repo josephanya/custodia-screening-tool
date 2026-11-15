@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9EEF5;color:#112D50;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#236DAD;text-decoration:none}a:hover{color:#112D50}
+h1,h2,h3,p{margin:0;text-wrap:pretty}
+input::placeholder{color:#8597AA}
+.dv-turn{padding:48px 48px 40px;border-bottom:1px solid rgba(17,45,80,.1);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 24px}
+.dv-tid{font:600 11px 'Geist Mono',monospace;padding:3px 8px;background:#112D50;color:#fff;border-radius:5px}
+.dv-tname{font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em;color:#112D50}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 11px 'Geist Mono',monospace;padding:3px 7px;background:rgba(17,45,80,.08);color:#112D50;border-radius:5px}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 13px/1.35 'Geist',sans-serif;color:#4B5D70;max-width:390px}
+.dv-card{flex:none;background:#fff;border:1px solid rgba(17,45,80,.08);border-radius:14px;box-shadow:0 2px 10px rgba(17,45,80,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#236DAD;color:#fff}
+.dv-next{margin:24px 0 0;font:13px/1.5 'Geist',sans-serif;color:#4B5D70}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1" style="background:#F0F7FF">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Foundations · same tokens as the Custodia landing page</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Colour, type, spacing</div>
+      <div class="dv-card" style="width:1240px;padding:40px;display:flex;flex-direction:column;gap:40px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Brand &amp; neutrals (from landing page)</span>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px">
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#112D50"></div><span style="font-size:14px;font-weight:600">Ink</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#112D50 · headings, FLAG</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#236DAD"></div><span style="font-size:14px;font-weight:600">Primary</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#236DAD · CTAs, selected</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#4F9EEA"></div><span style="font-size:14px;font-weight:600">Accent</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#4F9EEA · wordmark, focus ring</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#DBEBFB"></div><span style="font-size:14px;font-weight:600">Soft blue</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#DBEBFB · tags, steps</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#F0F7FF;border:1px solid #D6E2F0"></div><span style="font-size:14px;font-weight:600">Page</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#F0F7FF · background</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:72px;border-radius:16px;background:#fff;border:1px solid #D6E2F0"></div><span style="font-size:14px;font-weight:600">Surface</span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#FFFFFF · cards, tiles</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#4B5D70"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#4B5D70 · body text</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#8597AA"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#8597AA · placeholder only</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#D6E2F0"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#D6E2F0 · borders</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#E3E9F2"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#E3E9F2 · dividers</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#EFF2FA"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#EFF2FA · hover</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><div style="height:40px;border-radius:12px;background:#1B5A90"></div><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">#1B5A90 · primary hover</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Clinical status (added, tuned to the blue palette)</span>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+            <div style="display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:20px;background:#E6F4EC;border:1px solid #A9D9BF"><span style="font-size:15px;font-weight:600;color:#1E6B47">Lower risk</span><span style="font:500 12px/1.6 'Geist Mono',monospace;color:#1E6B47">text #1E6B47 · bg #E6F4EC<br>border #A9D9BF · 6.1:1</span></div>
+            <div style="display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:20px;background:#FFF4E3;border:1px solid #E59A2F"><span style="font-size:15px;font-weight:600;color:#8A4B08">Higher risk · Urgent</span><span style="font:500 12px/1.6 'Geist Mono',monospace;color:#8A4B08">text #8A4B08 · bg #FFF4E3<br>border #E59A2F · solid #C26A0A · 6.4:1</span></div>
+            <div style="display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:20px;background:#B42318;color:#fff"><span style="font-size:15px;font-weight:600">Emergency · Error</span><span style="font:500 12px/1.6 'Geist Mono',monospace">solid #B42318 · white 6.5:1<br>tint #FDEDEB · text #8F1D13</span></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Type · Geist + Geist Mono</span>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Display 44–64</span><span style="font:600 48px/1 'Geist',sans-serif;letter-spacing:-.045em">Know Your Risk</span></div>
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Question 30</span><span style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">How tall are you?</span></div>
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Title 22</span><span style="font:600 22px/1.2 'Geist',sans-serif;letter-spacing:-.025em">Next steps</span></div>
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Body 17 / 1.5</span><span style="font-size:17px;line-height:1.5;color:#4B5D70">Plain language. One idea per sentence. Never below 16px in the public flow.</span></div>
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Eyebrow 12</span><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span></div>
+              <div style="display:flex;align-items:baseline;gap:20px"><span style="width:110px;flex:none;font:500 12px 'Geist Mono',monospace;color:#4B5D70">Data 14 mono</span><span style="font:500 14px 'Geist Mono',monospace;letter-spacing:.03em">KYR-7F3K-92QD</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Spacing · 4pt base</span>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:4px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">4 · icon to label</span></div>
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:8px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">8 · chip padding</span></div>
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:12px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">12 · between tiles</span></div>
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:20px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">20 · mobile gutter, card stack</span></div>
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:32px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">32 · section gap, desktop gutter</span></div>
+              <div style="display:flex;align-items:center;gap:14px"><span style="width:56px;height:16px;background:#4F9EEA;border-radius:2px"></span><span style="font:500 12px 'Geist Mono',monospace;color:#4B5D70">56 · desktop columns</span></div>
+            </div>
+            <span style="font:500 12px/1.7 'Geist Mono',monospace;color:#4B5D70">Radius: 999 buttons/chips · 20 tiles, inputs · 24–28 cards · 6 FLAG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Components and states</div>
+      <div class="dv-card" style="width:1240px;padding:40px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 36px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Buttons · 56 public / 44 nurse</span>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Primary · Next →</button>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#1B5A90;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Hover / pressed</button>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;outline:3px solid #4F9EEA;outline-offset:3px">Keyboard focus</button>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;color:#112D50;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Secondary · ← Back</button>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#E3E9F2;color:#8597AA;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Disabled · answer to continue</button>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;opacity:.85"><span style="width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff"></span>Scoring…</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Inputs</span>
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Default</span><span style="height:60px;border-radius:18px;border:1.5px solid #D6E2F0;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:20px;color:#8597AA">e.g. 45<span style="font-size:16px;color:#4B5D70">years</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Focus</span><span style="height:60px;border-radius:18px;border:2px solid #236DAD;box-shadow:0 0 0 4px rgba(79,158,234,.25);background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:20px;font-weight:600">45<span style="font-size:16px;font-weight:400;color:#4B5D70">years</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Error</span><span style="height:60px;border-radius:18px;border:2px solid #B42318;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:20px;font-weight:600">400<span style="font-size:16px;font-weight:400;color:#4B5D70">kg</span></span><span style="display:flex;gap:6px;align-items:center;font-size:14px;font-weight:500;color:#8F1D13"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>Enter a weight between 30 and 250 kg</span></label>
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1.5px solid #D6E2F0"><span style="width:26px;height:26px;border-radius:8px;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:15px;line-height:1.45">Checkbox · checked. Whole row is the tap target.</span></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Option tiles · min 72px</span>
+          <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">Default</span></div>
+          <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#EFF2FA;border:1.5px solid #A8CCF2;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #4F9EEA;flex:none"></span><span style="font-size:18px;font-weight:600">Hover</span></div>
+          <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:18px;font-weight:600">Selected · tick + border</span></div>
+          <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px;outline:3px solid #4F9EEA;outline-offset:3px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">Keyboard focus</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;grid-column:span 2">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Alerts · icon + label + colour, never colour alone</span>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+            <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:15px;line-height:1.5;color:#4B5D70"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>Info · This tool does not diagnose. It estimates risk based on your answers.</div>
+            <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#FDEDEB;border:1.5px solid #F1B5AE;font-size:15px;line-height:1.5;color:#8F1D13"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg><span><strong>Error ·</strong> We couldn't send your answers. Check your connection and try again.</span></div>
+            <div style="display:flex;gap:14px;padding:18px;border-radius:20px;background:#FFF4E3;border:2px solid #E59A2F"><span style="width:36px;height:36px;border-radius:50%;background:#C26A0A;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A4B08">Urgent · today</span><span style="font-size:16px;font-weight:600;line-height:1.4;color:#5C3205">Clock icon, amber outline, tinted fill.</span></span></div>
+            <div style="display:flex;gap:14px;padding:18px;border-radius:20px;background:#B42318;color:#fff"><span style="width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5v.5"></path></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase">Emergency · now</span><span style="font-size:16px;font-weight:600;line-height:1.4">Warning icon, solid red, white text.</span></span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Badges · distinct shape each</span>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#FFF4E3;color:#8A4B08;border:1.5px solid #E59A2F;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:4px 10px 4px 7px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>URGENT</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#B42318;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5.5px 11px 5.5px 8px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4"></path></svg>EMERGENCY</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <span style="display:inline-flex;align-items:center;gap:6px;background:#E6F4EC;color:#1E6B47;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>Lower risk</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;color:#8A4B08;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8M8.5 11.5L12 8l3.5 3.5"></path></svg>Higher risk</span>
+            <span style="font-size:14px;color:#4B5D70">Routine (plain text)</span>
+          </div>
+          <p style="font-size:14px;line-height:1.5;color:#4B5D70">FLAG = diagnosed high risk (square, navy). Urgent = outlined pill. Emergency = solid pill. Readable in greyscale.</p>
+        </div>
+        <div style="grid-column:1 / -1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px;padding-top:28px;border-top:1px solid #E3E9F2">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Accessibility</span>
+            <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:1.5;color:#4B5D70">
+              <li>All text ≥ 4.5:1. #8597AA is reserved for placeholders and disabled states.</li>
+              <li>Focus: 3px #4F9EEA outline, 3px offset, on every interactive element. Never removed.</li>
+              <li>Tap targets ≥ 56px in the public flow, ≥ 44px in the dashboard.</li>
+              <li>Progress uses role="progressbar" with aria-valuenow/max and a text label "Question 3 of 11". Move focus to the new question heading on Next.</li>
+              <li>Option tiles are a radiogroup; arrow keys move, Space selects. Yes/No and single-select share the same pattern.</li>
+              <li>Urgent and emergency banners use role="alert" and are the first thing on the result page.</li>
+              <li>Dashboard rows are links (Enter opens); urgency is announced as text, not inferred from row colour.</li>
+            </ul>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font:500 13px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Interaction</span>
+            <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:1.5;color:#4B5D70">
+              <li>Progress: bar animates width over 300ms ease-out; count updates when the pathway is chosen.</li>
+              <li>Selection: tap selects instantly (tick + border). Yes/No questions auto-advance after 250ms; numeric and multi-option wait for Next.</li>
+              <li>Next is disabled until a valid answer exists. Disabled state keeps its label so the action stays clear.</li>
+              <li>Validation shows on Next or blur, never while typing. Message sits under the field with an icon.</li>
+              <li>Loading: "See my result" becomes "Scoring…" with a spinner; Back is disabled until scoring completes.</li>
+              <li>Submission errors appear in a red error box above the controls; answers are kept.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Public flow · mobile 390</span></div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Intro + consent. Start stays disabled until the box is ticked.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="flex:1;padding:36px 20px 24px;display:flex;flex-direction:column;gap:22px">
+          <span style="align-self:flex-start;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #D6E2F0;padding:6px 12px 6px 6px;border-radius:999px;font-size:13px;font-weight:500;color:#4B5D70"><span style="background:#236DAD;color:#fff;font-weight:600;padding:3px 9px;border-radius:999px;font-size:12px">Free</span>Diabetes risk triage</span>
+          <h1 style="font:600 46px/1 'Geist',sans-serif;letter-spacing:-.05em">Know Your Risk <span style="display:block;color:#236DAD;font-size:30px;letter-spacing:-.035em;margin-top:10px">Diabetes Screening</span></h1>
+          <p style="font-size:18px;line-height:1.55;color:#4B5D70">Answer a few short questions to understand your risk of diabetes or, if you already have diabetes, your risk of complications.</p>
+          <div style="display:flex;gap:18px;font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;text-transform:uppercase;color:#4B5D70"><span>≈ 2 minutes</span><span>·</span><span>One question at a time</span></div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:15px;line-height:1.5;color:#4B5D70"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;flex-direction:column;gap:14px">
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:18px;background:#fff;border:2px solid #236DAD"><span style="width:26px;height:26px;border-radius:8px;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:15px;line-height:1.45">I understand this is not a diagnosis and agree my answers may be used for screening and nurse review where appropriate.</span></label>
+          <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Start <span>→</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Branch question. Sets the pathway and total count.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center;min-height:26px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 1</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:6%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">Do you already have diabetes?</h2>
+          <div role="radiogroup" style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:14px;min-height:84px;padding:16px 18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:18px;font-weight:600">No / I'm not sure</span><span style="font-size:15px;color:#4B5D70">Check my diabetes risk</span></span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:84px;padding:16px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:18px;font-weight:600">Yes, I have diabetes</span><span style="font-size:15px;color:#4B5D70">Check for possible complications</span></span></div>
+          </div>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Next →</button></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Numeric. Large field, unit inside, numeric keypad.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 3 OF 11</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Risk estimate pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:27%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:10px"><h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">How tall are you?</h2><p style="font-size:17px;line-height:1.5;color:#4B5D70">An estimate is fine.</p></div>
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Height</span><span style="height:76px;border-radius:20px;border:2px solid #236DAD;box-shadow:0 0 0 4px rgba(79,158,234,.25);background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font:600 34px 'Geist',sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums">168<span style="font-size:18px;font-weight:500;letter-spacing:0;color:#4B5D70">cm</span></span><span style="font-size:14px;color:#4B5D70">Between 100 and 250 cm</span></label>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Next →</button></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2d"><div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>Yes / No (red-flag question). Auto-advances after selection.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 2 OF 15</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Diagnosed pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:13%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:10px"><h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">Do you have a wound or sore on your foot that is not healing?</h2><p style="font-size:17px;line-height:1.5;color:#4B5D70">This includes a blister, cut or ulcer that has lasted more than a week.</p></div>
+          <div role="radiogroup" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:18px;min-height:112px;padding:18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2"></span><span style="font-size:22px;font-weight:600;letter-spacing:-.02em">Yes</span></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:18px;min-height:112px;padding:18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:22px;font-weight:600;letter-spacing:-.02em">No</span></div>
+          </div>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Next →</button></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2e"><div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Single-select, 4 options.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 14 OF 15</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Diagnosed pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:93%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">When did you last have a diabetes check-up?</h2>
+          <div role="radiogroup" style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">In the last 6 months</span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:18px;font-weight:600">6 to 12 months ago</span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">More than a year ago</span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">Never, or I'm not sure</span></div>
+          </div>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25)">Next →</button></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2f"><div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Validation error. Next disabled until fixed.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 4 OF 11</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Risk estimate pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:36%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:10px"><h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">How much do you weigh?</h2><p style="font-size:17px;line-height:1.5;color:#4B5D70">An estimate is fine.</p></div>
+          <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Weight</span><span style="height:76px;border-radius:20px;border:2px solid #B42318;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font:600 34px 'Geist',sans-serif;letter-spacing:-.03em">400<span style="font-size:18px;font-weight:500;letter-spacing:0;color:#4B5D70">kg</span></span><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:15px;font-weight:500;color:#8F1D13"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>Enter a weight between 30 and 250 kg</span></label>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:17px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#E3E9F2;color:#8597AA;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Next →</button></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="2g"><div class="dv-olabel"><a class="dv-oid" href="#2g">2g</a>Last question, scoring + submission error box.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span></div>
+        <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 11 OF 11</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Risk estimate pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:100%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+        <div style="flex:1;padding:32px 20px 24px;display:flex;flex-direction:column;gap:24px">
+          <h2 style="font:600 30px/1.12 'Geist',sans-serif;letter-spacing:-.035em">Has anyone in your family been diagnosed with diabetes?</h2>
+          <div role="radiogroup" style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">No</span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:18px;font-weight:600">Yes, extended family</span><span style="font-size:15px;color:#4B5D70">Grandparent, aunt, uncle, cousin</span></span></div>
+            <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:18px;font-weight:600">Yes, close family</span><span style="font-size:15px;color:#4B5D70">Parent, brother, sister, child</span></span></div>
+          </div>
+          <div role="alert" style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#FDEDEB;border:1.5px solid #F1B5AE;font-size:15px;line-height:1.5;color:#8F1D13"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg><span><strong>We couldn't send your answers.</strong> Check your connection and try again. Your answers are saved.</span></div>
+        </div>
+        <div style="padding:16px 20px 28px;display:flex;gap:12px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:56px;padding:0 22px;border-radius:999px;border:1.5px solid #E3E9F2;background:#fff;font-size:17px;font-weight:600;color:#8597AA;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;flex:1;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;opacity:.85"><span style="width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff"></span>Scoring…</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="dv-next">Pathway counts are illustrative (11 risk / 15 diagnosed). Branch question shows no total until a pathway is chosen.</p>
+</section>
+
+<section class="dv-turn" id="t3">
+  <div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Results · mobile 390</span></div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Lower diabetes risk. Encouraging, preventive.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><button style="all:unset;box-sizing:border-box;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;color:#112D50;display:flex;align-items:center">Start over</button></div>
+        <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.04em">Your screening result</h1></div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#E6F4EC;color:#1E6B47;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>Lower diabetes risk</span>
+            <h2 style="font:600 26px/1.15 'Geist',sans-serif;letter-spacing:-.03em">Your answers suggest a lower risk right now</h2>
+            <p style="font-size:17px;line-height:1.55;color:#4B5D70">That's good news. Small daily habits help keep it that way.</p>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid #E3E9F2">
+            <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Next steps</h3>
+            <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">1</span>Eat healthy meals with plenty of vegetables.</li>
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">2</span>Aim for at least 30 minutes of activity most days.</li>
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">3</span>Keep to a healthy weight.</li>
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">4</span>Screen again in a year, or sooner if things change.</li>
+            </ol>
+          </div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Higher diabetes risk. Clear and motivating, with reasons.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><button style="all:unset;box-sizing:border-box;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;color:#112D50;display:flex;align-items:center">Start over</button></div>
+        <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.04em">Your screening result</h1></div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;color:#8A4B08;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8M8.5 11.5L12 8l3.5 3.5"></path></svg>Higher diabetes risk</span>
+            <h2 style="font:600 26px/1.15 'Geist',sans-serif;letter-spacing:-.03em">Please arrange clinical screening</h2>
+            <p style="font-size:17px;line-height:1.55;color:#4B5D70">Your answers suggest an elevated risk of diabetes. A hospital, clinic or pharmacy can check your blood glucose with a quick test.</p>
+            <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#236DAD;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 24px rgba(35,109,173,.25);margin-top:4px">Plan a clinical screening visit →</button>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Why this result appeared</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">Close family history</span>
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">Waist size</span>
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">Past high blood glucose</span>
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">Age 45–54</span>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid #E3E9F2">
+            <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Next steps</h3>
+            <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">1</span>Ask for a blood glucose or HbA1c test in the next few weeks.</li>
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">2</span>Bring your reference code so staff can see this screening.</li>
+            </ol>
+          </div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="3c"><div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Higher complication risk + WhatsApp nurse handoff (reference code only).</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><button style="all:unset;box-sizing:border-box;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;color:#112D50;display:flex;align-items:center">Start over</button></div>
+        <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.04em">Your screening result</h1></div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;color:#8A4B08;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8M8.5 11.5L12 8l3.5 3.5"></path></svg>Higher complication risk</span>
+            <h2 style="font:600 26px/1.15 'Geist',sans-serif;letter-spacing:-.03em">Your answers suggest higher complication risk</h2>
+            <p style="font-size:17px;line-height:1.55;color:#4B5D70">You may need timely support for diabetes-related symptoms or possible complications. A nurse can help you decide what to do next.</p>
+          </div>
+          <div style="background:#112D50;color:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#93A3B8">Your reference code</span><span style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font:500 22px 'Geist Mono',monospace;letter-spacing:.04em">KYR-7F3K-92QD</span><button style="all:unset;height:36px;padding:0 14px;border-radius:999px;border:1px solid #2E4F78;font-size:13px;font-weight:600;display:flex;align-items:center">Copy</button></span></div>
+            <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#4F9EEA;color:#0B2240;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path></svg>Chat with a nurse on WhatsApp</button>
+            <span style="display:flex;gap:8px;font-size:14px;line-height:1.45;color:#B5C3D3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="flex:none;margin-top:2px"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Only this code is shared in the message. Your answers stay private.</span>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid #E3E9F2">
+            <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Next steps</h3>
+            <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">1</span>Message a nurse today with your reference code.</li>
+              <li style="display:flex;gap:12px;font-size:16px;line-height:1.5"><span style="width:26px;height:26px;border-radius:50%;background:#DBEBFB;color:#236DAD;font:600 13px 'Geist Mono',monospace;display:grid;place-items:center;flex:none">2</span>Keep taking your medication as prescribed.</li>
+            </ol>
+          </div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="3d"><div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Urgent. Banner leads the page, above the result.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 8px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><button style="all:unset;box-sizing:border-box;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;color:#112D50;display:flex;align-items:center">Start over</button></div>
+        <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Screening complete</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.04em">Your screening result</h1></div>
+          <div role="alert" style="display:flex;flex-direction:column;gap:16px;padding:20px;border-radius:24px;background:#FFF4E3;border:2px solid #E59A2F">
+            <div style="display:flex;gap:14px">
+              <span style="width:40px;height:40px;border-radius:50%;background:#C26A0A;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+              <span style="display:flex;flex-direction:column;gap:6px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A4B08">Urgent · get help today</span><span style="font-size:18px;font-weight:600;line-height:1.4;color:#5C3205">Some of your answers need clinical attention today. Please contact a clinic or nurse now.</span></span>
+            </div>
+            <button style="all:unset;box-sizing:border-box;height:56px;border-radius:999px;background:#112D50;color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"></path></svg>Chat with a nurse on WhatsApp</button>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;color:#8A4B08;padding:6px 12px 6px 8px;border-radius:999px;font-size:14px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16V8M8.5 11.5L12 8l3.5 3.5"></path></svg>Higher complication risk</span>
+            <h2 style="font:600 24px/1.15 'Geist',sans-serif;letter-spacing:-.03em">Your answers suggest higher complication risk</h2>
+          </div>
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid #E3E9F2">
+            <h3 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Why this result appeared</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <span style="display:inline-flex;align-items:center;gap:6px;background:#FFF4E3;border:1px solid #E59A2F;color:#5C3205;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Foot wound not healing</span>
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">HbA1c above target</span>
+              <span style="background:#F0F7FF;border:1px solid #D6E2F0;padding:8px 12px;border-radius:999px;font-size:14px;font-weight:500">Numb or tingling feet</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#fff;border:1px dashed #A8CCF2"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4B5D70">Your reference code</span><span style="font:500 18px 'Geist Mono',monospace;letter-spacing:.04em">KYR-2M8C-41PA</span></span><button style="all:unset;height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center">Copy</button></div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="3e"><div class="dv-olabel"><a class="dv-oid" href="#3e">3e</a>Emergency. Replaces the page header; everything else steps back.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div role="alert" style="background:#B42318;color:#fff;padding:20px 20px 28px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#fff">custodia</span><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1.5px solid rgba(255,255,255,.6);border-radius:999px">Emergency</span></div>
+          <span style="width:56px;height:56px;border-radius:50%;background:#fff;display:grid;place-items:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5v.5"></path></svg></span>
+          <h1 style="font:600 32px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Your answers describe an emergency.</h1>
+          <p style="font-size:20px;line-height:1.4;font-weight:600">Go to the nearest emergency department now.</p>
+          <p style="font-size:16px;line-height:1.5;color:#FFE3DF">If you can't get there safely, ask someone to take you or call emergency services.</p>
+        </div>
+        <div style="padding:24px 20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:12px;border:1px solid #E3E9F2">
+            <span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70">Why you're seeing this</span>
+            <p style="font-size:16px;line-height:1.5">You told us you have <strong>chest pain or trouble breathing</strong>.</p>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:#fff;border:1px dashed #A8CCF2"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#4B5D70">Show this code to staff</span><span style="font:500 18px 'Geist Mono',monospace;letter-spacing:.04em">KYR-7F3K-92QD</span></span><button style="all:unset;height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center">Copy</button></div>
+          <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#fff;border:1px solid #E3E9F2;font-size:14px;line-height:1.5;color:#4B5D70"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+          <button style="all:unset;box-sizing:border-box;height:48px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:15px;font-weight:600;color:#112D50;display:flex;align-items:center;justify-content:center">Start over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="dv-next">Lower complication risk uses the <a class="dv-oid" href="#3a">3a</a> layout with its own copy. Emergency drops the nurse CTA so the only action is going to emergency care.</p>
+</section>
+
+<section class="dv-turn" id="t4">
+  <div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Public flow · desktop 1280</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="4a"><div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Intro. Landing-page nav and hero rhythm.</div>
+      <div class="dv-card" style="width:1280px;height:780px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="padding:14px 40px 0"><div style="max-width:1200px;margin:0 auto;padding:10px 10px 10px 22px;display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.06)"><span style="font:700 24px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;padding:12px 18px;font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private screening</span></div></div>
+        <div style="flex:1;max-width:1200px;width:100%;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:72px;align-items:center">
+          <div style="display:flex;flex-direction:column;gap:28px">
+            <span style="align-self:flex-start;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #D6E2F0;padding:6px 14px 6px 6px;border-radius:999px;font-size:14px;font-weight:500;color:#4B5D70"><span style="background:#236DAD;color:#fff;font-weight:600;padding:3px 10px;border-radius:999px;font-size:13px">Free</span>Diabetes risk triage</span>
+            <h1 style="font:600 80px/.98 'Geist',sans-serif;letter-spacing:-.05em">Know Your Risk <span style="display:block;color:#236DAD;font-size:48px;letter-spacing:-.04em;margin-top:14px">Diabetes Screening</span></h1>
+            <p style="font-size:20px;line-height:1.55;color:#4B5D70;max-width:520px">Answer a few short questions to understand your risk of diabetes or, if you already have diabetes, your risk of complications.</p>
+            <div style="display:flex;gap:18px;font:500 13px 'Geist Mono',monospace;letter-spacing:.04em;text-transform:uppercase;color:#4B5D70"><span>≈ 2 minutes</span><span>·</span><span>One question at a time</span></div>
+          </div>
+          <div style="background:#fff;border-radius:32px;padding:32px;display:flex;flex-direction:column;gap:18px;border:1px solid #E3E9F2;box-shadow:0 24px 60px rgba(17,45,80,.08)">
+            <div style="display:flex;gap:12px;padding:16px;border-radius:18px;background:#F0F7FF;font-size:16px;line-height:1.5;color:#4B5D70"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>This tool does not diagnose. It estimates risk based on your answers.</div>
+            <label style="display:flex;align-items:flex-start;gap:14px;padding:18px;border-radius:18px;border:1.5px solid #D6E2F0"><span style="width:26px;height:26px;border-radius:8px;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:16px;line-height:1.5">I understand this is not a diagnosis and agree my answers may be used for screening and nurse review where appropriate.</span></label>
+            <button style="all:unset;box-sizing:border-box;height:58px;border-radius:999px;background:#E3E9F2;color:#8597AA;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Start →</button>
+            <span style="font-size:14px;color:#4B5D70;text-align:center">Tick the box above to start.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dv-opt" id="4b"><div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Question. Same card, centred 640 column; controls sit under the answers.</div>
+      <div class="dv-card" style="width:1280px;height:780px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="padding:14px 40px 0"><div style="max-width:1200px;margin:0 auto;padding:10px 10px 10px 22px;display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.06)"><span style="font:700 24px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="display:flex;align-items:center;gap:6px;padding:12px 18px;font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private screening</span></div></div>
+        <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:24px 40px">
+          <div style="width:640px;background:#fff;border-radius:32px;padding:40px;display:flex;flex-direction:column;gap:28px;border:1px solid #E3E9F2;box-shadow:0 24px 60px rgba(17,45,80,.08)">
+            <div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.04em;color:#4B5D70">QUESTION 6 OF 11</span><span style="font-size:12px;font-weight:600;color:#236DAD;background:#DBEBFB;padding:4px 10px;border-radius:999px">Risk estimate pathway</span></div><div style="height:6px;border-radius:999px;background:#D6E2F0;overflow:hidden"><div style="width:55%;height:100%;background:#236DAD;border-radius:999px"></div></div></div>
+            <div style="display:flex;flex-direction:column;gap:10px"><h2 style="font:600 36px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Do you get at least 30 minutes of physical activity most days?</h2><p style="font-size:17px;line-height:1.5;color:#4B5D70">This includes walking, work that keeps you moving, or exercise.</p></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#fff;border:2px solid #236DAD;border-radius:20px;box-shadow:0 6px 18px rgba(35,109,173,.14)"><span style="width:24px;height:24px;border-radius:50%;background:#236DAD;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size:18px;font-weight:600">Yes</span></div>
+              <div style="display:flex;align-items:center;gap:14px;min-height:72px;padding:16px 18px;background:#fff;border:1.5px solid #D6E2F0;border-radius:20px"><span style="width:24px;height:24px;border-radius:50%;border:2px solid #A8CCF2;flex:none"></span><span style="font-size:18px;font-weight:600">No</span></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding-top:8px;border-top:1px solid #E3E9F2"><button style="all:unset;box-sizing:border-box;height:52px;padding:0 22px;margin-top:16px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:16px;font-weight:600;color:#112D50;display:flex;align-items:center">← Back</button><button style="all:unset;box-sizing:border-box;height:52px;padding:0 30px;margin-top:16px;border-radius:999px;background:#236DAD;color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;box-shadow:0 10px 24px rgba(35,109,173,.25)">Next →</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t5">
+  <div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Nurse · login and queue</span></div>
+  <div class="dv-opts">
+
+    <div class="dv-opt" id="5a"><div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Login. Plain, no marketing.</div>
+      <div class="dv-card" style="position:relative;width:1280px;height:720px;background:#F0F7FF;display:flex;align-items:center;justify-content:center">
+        <div style="width:440px;display:flex;flex-direction:column;gap:20px">
+          <span style="font:700 24px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA;text-align:center">custodia</span>
+          <div style="background:#fff;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:22px;border:1px solid #E3E9F2;box-shadow:0 24px 60px rgba(17,45,80,.08)">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Nurse access</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Diabetes dashboard</h1></div>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-size:15px;font-weight:600">Password</span><span style="height:52px;border-radius:16px;border:2px solid #B42318;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:20px;letter-spacing:.2em">••••••••<span style="font-size:14px;letter-spacing:0;font-weight:600;color:#236DAD">Show</span></span><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:14px;font-weight:500;color:#8F1D13"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>That password isn't right. Try again.</span></label>
+            <button style="all:unset;box-sizing:border-box;height:52px;border-radius:999px;background:#236DAD;color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center">Sign in</button>
+            <p style="font-size:13px;line-height:1.5;color:#4B5D70;padding-top:18px;border-top:1px solid #E3E9F2">This dashboard shows all submitted assessments to authenticated nurses. It does not assign, claim, or filter cases by nurse.</p>
+          </div>
+          <a href="#" style="text-align:center;font-size:15px;font-weight:500">← Return to screening</a>
+        </div>
+        <div style="position:absolute;right:40px;bottom:40px;width:300px;display:flex;flex-direction:column;gap:10px">
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70">Other error states</span>
+          <div style="display:flex;gap:10px;padding:12px 14px;border-radius:14px;background:#FDEDEB;border:1.5px solid #F1B5AE;font-size:13px;line-height:1.45;color:#8F1D13"><strong style="flex:none">Missing</strong>Enter your password.</div>
+          <div style="display:flex;gap:10px;padding:12px 14px;border-radius:14px;background:#FDEDEB;border:1.5px solid #F1B5AE;font-size:13px;line-height:1.45;color:#8F1D13"><strong style="flex:none">Locked</strong>Too many attempts. Try again in 15 minutes.</div>
+          <div style="display:flex;gap:10px;padding:12px 14px;border-radius:14px;background:#fff;border:1.5px solid #D6E2F0;font-size:13px;line-height:1.45;color:#4B5D70"><strong style="flex:none;color:#112D50">Setup</strong>The dashboard isn't configured yet. Contact your administrator.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="5b"><div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Queue. Urgency first, newest first, whole row opens the record.</div>
+      <div class="dv-card" style="width:1280px;background:#F0F7FF">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:#fff;border-bottom:1px solid #E3E9F2"><div style="display:flex;align-items:center;gap:14px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="width:1px;height:20px;background:#D6E2F0"></span><span style="font-size:15px;font-weight:600">Diabetes dashboard</span></div><button style="all:unset;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center">Sign out</button></div>
+        <div style="padding:36px 32px 40px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px">
+            <div style="display:flex;flex-direction:column;gap:8px;max-width:640px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Shared nurse queue</span><h1 style="font:600 40px/1.05 'Geist',sans-serif;letter-spacing:-.04em">Assessments</h1><p style="font-size:15px;line-height:1.55;color:#4B5D70">Every submitted assessment is visible here, newest first. High-risk diabetes cases are flagged for follow-up, and red-flag cases are marked urgent or emergency.</p></div>
+            <div style="display:flex;gap:10px;align-items:flex-end;flex:none">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Search by reference</span><span style="width:300px;height:44px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font:500 14px 'Geist Mono',monospace;color:#8597AA"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5D70" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Enter full reference code</span></label>
+              <button style="all:unset;height:44px;padding:0 20px;border-radius:999px;background:#236DAD;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center">Search</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <div style="background:#fff;border-radius:24px;padding:22px 24px;border:1px solid #E3E9F2;display:flex;justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:#4B5D70">Total assessments</span><span style="font:600 40px/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">248</span></div><span style="font-size:13px;color:#4B5D70">+14 today</span></div>
+            <div style="background:#fff;border-radius:24px;padding:22px 24px;border:1px solid #E3E9F2;display:flex;justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:#4B5D70">Diabetes high risk</span><span style="font:600 40px/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">37</span></div><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span></div>
+            <div style="background:#fff;border-radius:24px;padding:22px 24px;border:2px solid #E59A2F;display:flex;justify-content:space-between;align-items:flex-end"><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:#4B5D70">Urgent or emergency</span><span style="font:600 40px/1 'Geist',sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums">6</span></div><span style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;font:600 12px 'Geist Mono',monospace;letter-spacing:.04em"><span style="color:#8F1D13">2 EMERGENCY</span><span style="color:#8A4B08">4 URGENT</span></span></div>
+          </div>
+          <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;overflow:hidden">
+            <div style="display:grid;grid-template-columns:{{ cols }};gap:16px;align-items:center;padding:12px 20px 12px 24px;border-bottom:1px solid #E3E9F2;background:#F7FAFE;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><span>Flag</span><span>Urgency</span><span>Submitted</span><span>Reference</span><span>Diabetes status</span><span>Classification</span><span style="text-align:right">Score</span><span>Rule</span><span></span></div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:{{ cols }};gap:16px;align-items:center;padding:{{ r.pad }} 20px {{ r.pad }} 20px;border-bottom:1px solid #E3E9F2;border-left:4px solid {{ r.bar }};background:{{ r.bg }};font-size:14px;cursor:pointer" style-hover="background:#EFF2FA">
+                <span><sc-if value="{{ r.flag }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span></sc-if><sc-if value="{{ r.noFlag }}"><span style="color:#8597AA">—</span></sc-if></span>
+                <span>
+                  <sc-if value="{{ r.isEm }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#B42318;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5.5px 11px 5.5px 8px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4"></path></svg>EMERGENCY</span></sc-if>
+                  <sc-if value="{{ r.isUr }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#FFF4E3;color:#8A4B08;border:1.5px solid #E59A2F;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:4px 10px 4px 7px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>URGENT</span></sc-if>
+                  <sc-if value="{{ r.isRo }}"><span style="color:#4B5D70">Routine</span></sc-if>
+                </span>
+                <span style="color:#4B5D70;font-variant-numeric:tabular-nums">{{ r.sub }}</span>
+                <span style="font:500 14px 'Geist Mono',monospace;letter-spacing:.02em;color:#112D50">{{ r.ref }}</span>
+                <span style="color:#4B5D70">{{ r.status }}</span>
+                <span style="font-weight:600">{{ r.cls }}</span>
+                <span style="text-align:right;font:500 13px 'Geist Mono',monospace;color:#112D50">{{ r.score }}</span>
+                <span style="font:500 13px 'Geist Mono',monospace;color:#4B5D70">{{ r.rule }}</span>
+                <span style="color:#236DAD;font-size:18px">›</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;font-size:13px;color:#4B5D70"><span>Showing 1–8 of 248</span><span style="display:flex;gap:8px"><button style="all:unset;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #E3E9F2;color:#8597AA;font-weight:600;display:flex;align-items:center">Newer</button><button style="all:unset;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #D6E2F0;color:#112D50;font-weight:600;display:flex;align-items:center">Older</button></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="5c"><div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Empty queue.</div>
+      <div class="dv-card" style="width:620px;background:#F0F7FF;padding:28px">
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:56px 40px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+          <span style="width:56px;height:56px;border-radius:18px;background:#DBEBFB;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M4 13h4l2 3h4l2-3h4"></path></svg></span>
+          <h2 style="font:600 22px/1.2 'Geist',sans-serif;letter-spacing:-.02em">No assessments yet</h2>
+          <p style="font-size:15px;line-height:1.55;color:#4B5D70;max-width:380px">New screenings will appear here as soon as they're submitted, newest first.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="5d"><div class="dv-olabel"><a class="dv-oid" href="#5d">5d</a>Search: no match / invalid format.</div>
+      <div class="dv-card" style="width:620px;background:#F0F7FF;padding:28px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <label style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Search by reference</span><span style="height:44px;border-radius:999px;border:2px solid #B42318;background:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font:500 14px 'Geist Mono',monospace;color:#112D50"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5D70" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>KYR-7F3K</span><span role="alert" style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:500;color:#8F1D13"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>Enter the full code, e.g. KYR-7F3K-92QD</span></label>
+          <button style="all:unset;height:44px;padding:0 18px;margin-top:22px;border-radius:999px;background:#236DAD;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center">Search</button>
+          <button style="all:unset;height:44px;padding:0 16px;margin-top:22px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;font-size:14px;font-weight:600;display:flex;align-items:center">Clear</button>
+        </div>
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:40px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+          <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">No assessment matches <span style="font-family:'Geist Mono',monospace;font-weight:500">KYR-9Q4T-07LZ</span></h2>
+          <p style="font-size:15px;line-height:1.55;color:#4B5D70;max-width:400px">Check each character and try again. Search needs the full reference code.</p>
+          <a href="#" style="font-size:14px;font-weight:600">Clear search and show all</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="5e"><div class="dv-olabel"><a class="dv-oid" href="#5e">5e</a>Queue on mobile: stacked cards, urgency on top line.</div>
+      <div class="dv-card" style="width:390px;min-height:844px;background:#F0F7FF;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#fff;border-bottom:1px solid #E3E9F2"><span style="font:700 20px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><button style="all:unset;height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center">Sign out</button></div>
+        <div style="padding:24px 16px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:4px;padding:0 4px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Shared nurse queue</span><h1 style="font:600 30px/1.1 'Geist',sans-serif;letter-spacing:-.035em">Assessments</h1></div>
+          <div style="display:flex;gap:8px"><span style="flex:1;background:#fff;border:1px solid #E3E9F2;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:600 22px 'Geist',sans-serif">248</span><span style="font-size:12px;color:#4B5D70">Total</span></span><span style="flex:1;background:#fff;border:1px solid #E3E9F2;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:600 22px 'Geist',sans-serif">37</span><span style="font-size:12px;color:#4B5D70">High risk</span></span><span style="flex:1;background:#fff;border:2px solid #E59A2F;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:600 22px 'Geist',sans-serif">6</span><span style="font-size:12px;color:#4B5D70">Urgent / emerg.</span></span></div>
+          <span style="height:48px;border-radius:999px;border:1.5px solid #D6E2F0;background:#fff;display:flex;align-items:center;gap:10px;padding:0 16px;font:500 14px 'Geist Mono',monospace;color:#8597AA"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5D70" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Enter full reference code</span>
+          <sc-for list="{{ mrows }}" as="r" hint-placeholder-count="4">
+            <div style="background:{{ r.bg }};border:{{ r.border }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <span style="display:flex;gap:6px;align-items:center">
+                  <sc-if value="{{ r.isEm }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#B42318;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5.5px 11px 5.5px 8px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4"></path></svg>EMERGENCY</span></sc-if>
+                  <sc-if value="{{ r.isUr }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#FFF4E3;color:#8A4B08;border:1.5px solid #E59A2F;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:4px 10px 4px 7px;border-radius:999px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>URGENT</span></sc-if>
+                  <sc-if value="{{ r.isRo }}"><span style="font-size:13px;color:#4B5D70">Routine</span></sc-if>
+                  <sc-if value="{{ r.flag }}"><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px">FLAG</span></sc-if>
+                </span>
+                <span style="font-size:12px;color:#4B5D70">{{ r.subShort }}</span>
+              </div>
+              <span style="font-size:16px;font-weight:600">{{ r.cls }}</span>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 13px 'Geist Mono',monospace">{{ r.ref }}</span><span style="font-size:13px;color:#4B5D70">{{ r.status }} · {{ r.score }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t6">
+  <div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Nurse · assessment detail</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="6a"><div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Emergency record. Urgency and summary first; provenance in the side column.</div>
+      <div class="dv-card" style="width:1280px;background:#F0F7FF">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:#fff;border-bottom:1px solid #E3E9F2"><div style="display:flex;align-items:center;gap:14px"><span style="font:700 22px 'Geist',sans-serif;letter-spacing:-.04em;color:#4F9EEA">custodia</span><span style="width:1px;height:20px;background:#D6E2F0"></span><span style="font-size:15px;font-weight:600">Diabetes dashboard</span></div><button style="all:unset;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #D6E2F0;font-size:14px;font-weight:600;display:flex;align-items:center">Sign out</button></div>
+        <div style="padding:28px 32px 40px;display:flex;flex-direction:column;gap:22px">
+          <a href="#" style="font-size:14px;font-weight:600">← Back to all assessments</a>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Assessment detail</span><h1 style="font:600 40px/1.05 'Geist',sans-serif;letter-spacing:-.04em">Higher complication risk</h1></div>
+            <div style="display:flex;gap:20px;align-items:center;font-size:14px;color:#4B5D70"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px">Reference</span><span style="font:500 15px 'Geist Mono',monospace;color:#112D50">KYR-7F3K-92QD</span></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px">Submitted</span><span style="font-size:15px;font-weight:500;color:#112D50">14 Nov 2026, 09:42</span></span><span style="display:inline-flex;align-items:center;gap:5px;background:#112D50;color:#fff;font:600 11px 'Geist Mono',monospace;letter-spacing:.08em;padding:5px 8px;border-radius:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><path d="M5 2h2v20H5zM8 3h11l-3 5 3 5H8z"></path></svg>FLAG</span></div>
+          </div>
+          <div role="alert" style="display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:20px;background:#B42318;color:#fff"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v4M12 17.5v.5"></path></svg></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase">Emergency</span><span style="font-size:17px;font-weight:600">Emergency red flags were reported. This person was told to seek emergency care now.</span></span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:18px">
+                <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Summary</h2>
+                <dl style="margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 24px">
+                  <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Diabetes status</dt><dd style="margin:0;font-size:16px;font-weight:600">Diagnosed</dd></div>
+                  <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Classification</dt><dd style="margin:0;font-size:16px;font-weight:600">Higher complication risk</dd></div>
+                  <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Clinical urgency</dt><dd style="margin:0;font-size:16px;font-weight:600;color:#8F1D13">Emergency</dd></div>
+                  <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Score</dt><dd style="margin:0;font:500 16px 'Geist Mono',monospace">36 · overridden</dd></div>
+                  <div style="display:flex;flex-direction:column;gap:4px"><dt style="font-size:13px;color:#4B5D70">Reference</dt><dd style="margin:0;font:500 16px 'Geist Mono',monospace">KYR-7F3K-92QD</dd></div>
+                </dl>
+              </div>
+              <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:14px">
+                <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Score breakdown</h2>
+                <div style="display:flex;flex-direction:column">
+                  <sc-for list="{{ factors }}" as="f" hint-placeholder-count="6">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid #E3E9F2;font-size:15px"><span>{{ f.f }}</span><sc-if value="{{ f.ov }}"><span style="font:600 12px 'Geist Mono',monospace;letter-spacing:.04em;color:{{ f.c }};background:{{ f.bg }};padding:4px 10px;border-radius:999px">{{ f.p }}</span></sc-if><sc-if value="{{ f.pts }}"><span style="font:500 14px 'Geist Mono',monospace">{{ f.p }}</span></sc-if></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:14px">
+                <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Full responses</h2>
+                <div style="display:flex;flex-direction:column">
+                  <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:8px 0;border-bottom:1px solid #E3E9F2;font:500 11px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70"><span>Question</span><span>Answer</span></div>
+                  <sc-for list="{{ responses }}" as="q" hint-placeholder-count="8">
+                    <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:11px 0;border-bottom:1px solid #E3E9F2;font-size:15px"><span style="color:#4B5D70">{{ q.q }}</span><span style="font-weight:600">{{ q.a }}</span></div>
+                  </sc-for>
+                </div>
+                <details style="border-radius:14px;background:#F7FAFE;border:1px solid #E3E9F2;padding:12px 16px;font-size:14px"><summary style="cursor:pointer;font-weight:600;color:#236DAD">Show raw JSON</summary><pre style="margin:12px 0 0;font:500 12px/1.6 'Geist Mono',monospace;white-space:pre-wrap;word-break:break-all;color:#112D50">{"diagnosed":true,"foot_wound":true,"chest_pain":true,"hba1c":"gt_9", …}</pre></details>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:22px;display:flex;flex-direction:column;gap:14px">
+              <span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#4B5D70">Provenance</span>
+              <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+                <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#4B5D70">Rule version</span><span style="font-family:'Geist Mono',monospace">v2.3</span></div>
+                <div style="display:flex;justify-content:space-between;gap:12px"><span style="color:#4B5D70">Questionnaire version</span><span style="font-family:'Geist Mono',monospace">q-2026.10</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#4B5D70">Ruleset hash</span><span style="font:500 12px/1.5 'Geist Mono',monospace;word-break:break-all;background:#F7FAFE;border-radius:10px;padding:8px 10px">sha256:9f2c4e1a7b03d8e65c1f0a9b44d2e7c813a6f05b92de4c7a1e8f3b06d5c29a47</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="6b"><div class="dv-olabel"><a class="dv-oid" href="#6b">6b</a>Anonymized record. Result kept, answers removed.</div>
+      <div class="dv-card" style="width:820px;background:#F0F7FF;padding:28px 32px 36px;display:flex;flex-direction:column;gap:20px">
+        <a href="#" style="font-size:14px;font-weight:600">← Back to all assessments</a>
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 12px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#236DAD">Assessment detail</span><h1 style="font:600 34px/1.05 'Geist',sans-serif;letter-spacing:-.04em">Lower diabetes risk</h1><span style="font-size:14px;color:#4B5D70"><span style="font-family:'Geist Mono',monospace;color:#112D50">KYR-1D7R-90GM</span> · Submitted 2 Feb 2025, 16:12</span></div>
+        <div style="background:#fff;border-radius:24px;border:1px solid #E3E9F2;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <h2 style="font:600 20px/1.2 'Geist',sans-serif;letter-spacing:-.02em">Full responses</h2>
+          <div style="display:flex;gap:14px;padding:18px;border-radius:18px;background:#F0F7FF;border:1px dashed #A8CCF2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#236DAD" stroke-width="2.2" stroke-linecap="round" style="flex:none"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:16px;font-weight:600">Responses anonymized</span><span style="font-size:14px;line-height:1.5;color:#4B5D70">Individual answers for this assessment were removed under the data retention policy. Classification, score and provenance are kept for reporting.</span></span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="height:14px;border-radius:7px;background:#EFF2FA;width:80%"></div>
+            <div style="height:14px;border-radius:7px;background:#EFF2FA;width:64%"></div>
+            <div style="height:14px;border-radius:7px;background:#EFF2FA;width:72%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;queueDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;'comfortable'|'compact'&quot;,&quot;section&quot;:&quot;Nurse queue&quot;},&quot;urgencyRowTint&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Nurse queue&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const compact = (this.props.queueDensity ?? 'comfortable') === 'compact';
+    const tint = this.props.urgencyRowTint ?? true;
+    const raw = [
+      ['em', true, '14 Nov 2026 · 09:42', 'KYR-7F3K-92QD', 'Diagnosed', 'Higher complication risk', 'Override', 'v2.3'],
+      ['ur', true, '14 Nov 2026 · 09:15', 'KYR-2M8C-41PA', 'Diagnosed', 'Higher complication risk', 'Override', 'v2.3'],
+      ['ro', true, '14 Nov 2026 · 08:51', 'KYR-9Q4T-07LX', 'Diagnosed', 'Higher complication risk', '62', 'v2.3'],
+      ['ro', false, '14 Nov 2026 · 08:30', 'KYR-5H1V-88RD', 'Not diagnosed', 'Higher diabetes risk', '17', 'v2.3'],
+      ['em', true, '13 Nov 2026 · 22:10', 'KYR-4T9E-30HB', 'Diagnosed', 'Higher complication risk', 'Override', 'v2.3'],
+      ['ro', false, '13 Nov 2026 · 21:04', 'KYR-3B6N-25WE', 'Not diagnosed', 'Lower diabetes risk', '6', 'v2.3'],
+      ['ur', true, '13 Nov 2026 · 18:47', 'KYR-8K2F-63JS', 'Diagnosed', 'Higher complication risk', 'Override', 'v2.3'],
+      ['ro', false, '13 Nov 2026 · 16:12', 'KYR-1D7R-90GM', 'Diagnosed', 'Lower complication risk', '24', 'v2.2'],
+    ];
+    const rows = raw.map(([u, flag, sub, ref, status, cls, score, rule]) => ({
+      isEm: u === 'em', isUr: u === 'ur', isRo: u === 'ro', flag, noFlag: !flag,
+      sub, subShort: sub.split(' · ')[1], ref, status, cls, score, rule,
+      bg: tint ? (u === 'em' ? '#FDEDEB' : u === 'ur' ? '#FFF7EA' : '#fff') : '#fff',
+      bar: u === 'em' ? '#B42318' : u === 'ur' ? '#E59A2F' : 'transparent',
+      border: u === 'em' ? '2px solid #B42318' : u === 'ur' ? '2px solid #E59A2F' : '1px solid #E3E9F2',
+      pad: compact ? '9px' : '15px',
+    }));
+    const factors = [
+      { f: 'Chest pain or trouble breathing', p: 'EMERGENCY OVERRIDE', ov: true, c: '#fff', bg: '#B42318' },
+      { f: 'Non-healing foot wound or ulcer', p: 'URGENT OVERRIDE', ov: true, c: '#8A4B08', bg: '#FFF4E3' },
+      { f: 'HbA1c above 9%', p: '+12', pts: true },
+      { f: 'Neuropathy symptoms', p: '+10', pts: true },
+      { f: 'Diabetes for more than 10 years', p: '+8', pts: true },
+      { f: 'Misses medication most weeks', p: '+6', pts: true },
+    ];
+    const responses = [
+      ['Do you already have diabetes?', 'Yes, I have diabetes'],
+      ['Non-healing foot wound or ulcer', 'Yes'],
+      ['Sudden vision loss or blurry vision', 'No'],
+      ['Nausea, vomiting, fast breathing or confusion', 'No'],
+      ['Chest pain or trouble breathing', 'Yes'],
+      ['Most recent HbA1c', 'Above 9%'],
+      ['How long you have had diabetes', 'More than 10 years'],
+      ['Last diabetes check-up', '6 to 12 months ago'],
+    ].map(([q, a]) => ({ q, a }));
+    return {
+      rows, mrows: rows.slice(0, 4), factors, responses,
+      cols: '64px 128px 160px 150px 120px minmax(0,1fr) 70px 50px 16px',
+    };
+  }
+}
+</script>
+</body>
+</html>

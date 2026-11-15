@@ -4,15 +4,15 @@ import { describe, it } from "node:test";
 import { createReferenceCode, normalizeReferenceCode } from "./reference-code";
 
 describe("createReferenceCode", () => {
-  it("produces a prefixed 12 character code", () => {
+  it("produces a KYR code with two four-character groups", () => {
     const code = createReferenceCode();
 
-    assert.match(code, /^CST-[0-9A-HJKMNP-TV-Z]{12}$/);
+    assert.match(code, /^KYR-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/);
   });
 
-  it("never emits ambiguous characters", () => {
+  it("never emits characters omitted from the handoff alphabet", () => {
     for (let attempt = 0; attempt < 500; attempt += 1) {
-      assert.doesNotMatch(createReferenceCode(), /[ILOU]/);
+      assert.doesNotMatch(createReferenceCode(), /[IO01]/);
     }
   });
 
@@ -31,13 +31,13 @@ describe("normalizeReferenceCode", () => {
   });
 
   it("accepts lowercase, spaced, and prefix-less input", () => {
-    assert.equal(normalizeReferenceCode("cst-abcdef234567"), "CST-ABCDEF234567");
-    assert.equal(normalizeReferenceCode("  ABCDEF234567 "), "CST-ABCDEF234567");
-    assert.equal(normalizeReferenceCode("ABCD EF23 4567"), "CST-ABCDEF234567");
+    assert.equal(normalizeReferenceCode("kyr-7f3k-92qd"), "KYR-7F3K-92QD");
+    assert.equal(normalizeReferenceCode("  7F3K92QD "), "KYR-7F3K-92QD");
+    assert.equal(normalizeReferenceCode("7F3K 92QD"), "KYR-7F3K-92QD");
   });
 
-  it("corrects ambiguous characters", () => {
-    assert.equal(normalizeReferenceCode("CST-ILOU23456789"), "CST-110V23456789");
+  it("rejects characters omitted from new KYR codes", () => {
+    assert.equal(normalizeReferenceCode("KYR-ILOU-2345"), null);
   });
 
   it("accepts legacy eight character hex codes", () => {
@@ -46,13 +46,13 @@ describe("normalizeReferenceCode", () => {
   });
 
   it("rejects partial codes so the reference space cannot be scanned", () => {
-    assert.equal(normalizeReferenceCode("CST-1A2B"), null);
-    assert.equal(normalizeReferenceCode("CST"), null);
+    assert.equal(normalizeReferenceCode("KYR-1A2B"), null);
+    assert.equal(normalizeReferenceCode("KYR"), null);
     assert.equal(normalizeReferenceCode(""), null);
-    assert.equal(normalizeReferenceCode("CST-ABCDEF23456789"), null);
+    assert.equal(normalizeReferenceCode("KYR-ABCDEF23456789"), null);
   });
 
   it("rejects characters outside the alphabet", () => {
-    assert.equal(normalizeReferenceCode("CST-ABCDEF23456!"), null);
+    assert.equal(normalizeReferenceCode("KYR-7F3K-92Q!"), null);
   });
 });
