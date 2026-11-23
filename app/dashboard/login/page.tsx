@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -33,9 +32,7 @@ export default async function NurseDashboardLoginPage({ searchParams }: LoginPag
   return (
     <main className="pageShell dashboardShell authShell">
       <div className="authFrame">
-        <span className="authWordmark">
-          <Image alt="Custodia" className="brandLogo" height={26} src="/custodia-logo.svg" width={132} />
-        </span>
+        <span className="authWordmark">custodia</span>
         <section className="authPanel">
           <div className="panelHeader">
             <p className="eyebrow">Nurse access</p>

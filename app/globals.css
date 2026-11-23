@@ -1435,8 +1435,15 @@ h2 {
 
 .authWordmark {
   align-items: center;
+  align-self: center;
+  color: var(--color-accent);
   display: inline-flex;
-  min-height: 45px;
+  font-size: 24px;
+  font-weight: 700;
+  justify-content: center;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  min-height: 29px;
   min-width: 44px;
   text-align: center;
 }
@@ -1574,12 +1581,13 @@ h2 {
   padding-top: 18px;
 }
 
-.authPanel .dashboardBackLink {
+.authFrame > .dashboardBackLink {
   align-self: center;
   color: var(--color-primary);
   font-size: 15px;
   font-weight: 500;
   text-align: center;
+  text-decoration: none;
 }
 
 .nurseHeader {
@@ -2652,7 +2660,7 @@ h2 {
   }
 
   .authWordmark {
-    justify-content: center;
+    min-height: 29px;
   }
 
   .authPanel {
