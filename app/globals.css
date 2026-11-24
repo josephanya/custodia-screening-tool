@@ -1436,15 +1436,10 @@ h2 {
 .authWordmark {
   align-items: center;
   align-self: center;
-  color: var(--color-accent);
   display: inline-flex;
-  font-size: 24px;
-  font-weight: 700;
   justify-content: center;
-  letter-spacing: -0.04em;
-  line-height: 1.2;
-  min-height: 29px;
-  min-width: 44px;
+  min-height: 26px;
+  width: 132px;
   text-align: center;
 }
 
