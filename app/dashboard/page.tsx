@@ -26,12 +26,14 @@ type NurseDashboardPageProps = {
   searchParams: Promise<{
     reference?: string;
     after?: string;
+    deleted?: string;
+    deleteError?: string;
   }>;
 };
 
 export default async function NurseDashboardPage({ searchParams }: NurseDashboardPageProps) {
   const session = await requireNurseSession();
-  const { reference, after } = await searchParams;
+  const { reference, after, deleted, deleteError } = await searchParams;
   const referenceQuery = reference?.trim() ?? "";
   const emptyReferenceError = reference !== undefined && referenceQuery.length === 0;
   const normalizedReference = referenceQuery ? normalizeReferenceCode(referenceQuery) : null;
@@ -162,6 +164,18 @@ export default async function NurseDashboardPage({ searchParams }: NurseDashboar
 
   return (
     <DashboardShell headerAside={searchForm}>
+      {deleted === "1" ? (
+        <div className="dashboardNotice dashboardNotice-success" role="status">
+          Assessment deleted.
+        </div>
+      ) : null}
+      {deleteError ? (
+        <div className="dashboardNotice dashboardNotice-error" role="alert">
+          {deleteError === "not_found"
+            ? "Assessment was not found. It may have already been deleted."
+            : "Assessment could not be deleted. Please try again."}
+        </div>
+      ) : null}
       <div className="dashboardStats" aria-label="Assessment totals">
         <div className="dashboardStatCard">
           <p>{normalizedReference ? "Matching assessments" : "Total assessments"}</p>

@@ -1676,6 +1676,24 @@ h2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.dashboardNotice {
+  border-radius: var(--radius-info-box);
+  font-weight: 600;
+  padding: 14px 16px;
+}
+
+.dashboardNotice-success {
+  background: #ecfdf3;
+  border: 1.5px solid #b7ebca;
+  color: #16743f;
+}
+
+.dashboardNotice-error {
+  background: var(--status-error-bg);
+  border: 1.5px solid var(--status-error-box-border);
+  color: var(--status-error-text);
+}
+
 .dashboardStatCard,
 .detailBlock,
 .emptyState {
@@ -2479,7 +2497,8 @@ h2 {
 }
 
 .deleteAssessmentBlock p,
-.deleteAssessmentBlock label {
+.deleteAssessmentBlock label,
+.deleteAssessmentBlock small {
   color: var(--color-text-body);
   font-size: 13px;
   line-height: 1.45;

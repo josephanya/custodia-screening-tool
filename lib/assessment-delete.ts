@@ -12,6 +12,9 @@ type AssessmentDeleteClient = {
     } | null>;
     deleteMany(input: { where: { id: string } }): Promise<{ count: number }>;
   };
+  result: {
+    deleteMany(input: { where: { assessmentId: string } }): Promise<{ count: number }>;
+  };
   recordAuditEvent(event: {
     action: "assessment_deleted";
     actorType: AuditActorType;
@@ -47,6 +50,8 @@ export async function deleteAssessmentForNurse(
   if (normalizeReferenceCode(input.confirmation) !== assessment.referenceCode) {
     return { status: "confirmation_mismatch" };
   }
+
+  await client.result.deleteMany({ where: { assessmentId: assessment.id } });
 
   const deleted = await client.assessment.deleteMany({ where: { id: assessment.id } });
 

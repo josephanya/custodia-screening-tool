@@ -7,7 +7,7 @@ import { AuditActorType } from "./generated/prisma/client";
 describe("deleteAssessmentForNurse", () => {
   it("deletes the assessment and records a nurse audit event when confirmation matches", async () => {
     const auditEvents: unknown[] = [];
-    const deletedIds: string[] = [];
+    const deleted: string[] = [];
 
     const result = await deleteAssessmentForNurse(
       {
@@ -20,7 +20,13 @@ describe("deleteAssessmentForNurse", () => {
         assessment: {
           findUnique: async () => ({ id: "assessment-1", referenceCode: "KYR-7F3K-92QD" }),
           deleteMany: async ({ where }) => {
-            deletedIds.push(where.id);
+            deleted.push(`assessment:${where.id}`);
+            return { count: 1 };
+          },
+        },
+        result: {
+          deleteMany: async ({ where }) => {
+            deleted.push(`result:${where.assessmentId}`);
             return { count: 1 };
           },
         },
@@ -31,7 +37,7 @@ describe("deleteAssessmentForNurse", () => {
     );
 
     assert.equal(result.status, "deleted");
-    assert.deepEqual(deletedIds, ["assessment-1"]);
+    assert.deepEqual(deleted, ["result:assessment-1", "assessment:assessment-1"]);
     assert.deepEqual(auditEvents, [
       {
         action: "assessment_deleted",
@@ -59,6 +65,12 @@ describe("deleteAssessmentForNurse", () => {
       {
         assessment: {
           findUnique: async () => ({ id: "assessment-1", referenceCode: "KYR-7F3K-92QD" }),
+          deleteMany: async () => {
+            deleteCalled = true;
+            return { count: 1 };
+          },
+        },
+        result: {
           deleteMany: async () => {
             deleteCalled = true;
             return { count: 1 };

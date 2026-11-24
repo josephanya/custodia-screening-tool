@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { deleteAssessmentForNurse } from "@/lib/assessment-delete";
 import { auditActions, recordAuditEvent } from "@/lib/audit";
 import { AuditActorType } from "@/lib/generated/prisma/client";
-import { logEvent, logWarning } from "@/lib/logger";
+import { logError, logEvent, logWarning } from "@/lib/logger";
 import {
   isNurseAuthConfigured,
   revokeNurseSession,
@@ -119,9 +119,13 @@ export async function deleteAssessment(formData: FormData) {
     },
     {
       assessment: prisma.assessment,
+      result: prisma.result,
       recordAuditEvent,
     },
-  );
+  ).catch((error: unknown) => {
+    logError("assessment_delete_failed", error, { assessmentId, sessionId: session.sessionId });
+    redirect("/dashboard?deleteError=failed");
+  });
 
   if (result.status === "confirmation_mismatch") {
     redirect(`/dashboard/assessments/${assessmentId}?deleteError=confirmation`);

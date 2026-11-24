@@ -261,8 +261,9 @@ export default async function AssessmentDetailPage({ params, searchParams }: Ass
                   name="confirmation"
                   placeholder={detail.referenceCode}
                   autoComplete="off"
-                  required
+                  aria-describedby="delete-confirmation-help"
                 />
+                <small id="delete-confirmation-help">Enter {detail.referenceCode} to confirm permanent deletion.</small>
                 {deleteError === "confirmation" ? (
                   <p className="fieldError" role="alert">Reference code did not match.</p>
                 ) : null}
