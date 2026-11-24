@@ -17,6 +17,7 @@ export const auditActions = {
   assessmentListViewed: "assessment_list_viewed",
   assessmentSearched: "assessment_searched",
   assessmentViewed: "assessment_viewed",
+  assessmentDeleted: "assessment_deleted",
   rulesetMismatch: "ruleset_mismatch",
 } as const;
 

@@ -171,8 +171,8 @@ without changing clinical question content that needs sign-off.
 - [~] **CSP still allows `'unsafe-inline'` for scripts**, which Next.js requires without a
   per-request nonce. Moving to a nonce-based CSP via `proxy.ts` is the follow-up.
 - [ ] **Explicit CSRF strategy.** `SameSite=Lax` plus Next's server-action origin check covers the
-  current mutations (sign in, sign out). A token scheme is needed before adding assign / triage /
-  export / delete actions.
+  current mutations (sign in, sign out, reference-confirmed delete). A token scheme is needed before
+  adding assign / triage / export actions.
 
 ## P2 — Operability
 

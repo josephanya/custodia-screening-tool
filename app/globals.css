@@ -872,7 +872,8 @@ h2 {
 }
 
 .primaryButton,
-.secondaryButton {
+.secondaryButton,
+.dangerButton {
   align-items: center;
   border-radius: var(--radius-pill);
   cursor: pointer;
@@ -933,7 +934,8 @@ h2 {
 }
 
 .primaryButton:disabled,
-.secondaryButton:disabled {
+.secondaryButton:disabled,
+.dangerButton:disabled {
   background: var(--color-disabled-bg);
   border-color: var(--color-disabled-bg);
   box-shadow: none;
@@ -949,6 +951,17 @@ h2 {
 
 .secondaryButton:hover:not(:disabled) {
   border-color: var(--color-ink);
+}
+
+.dangerButton {
+  background: var(--danger);
+  border: 1.5px solid var(--danger);
+  color: var(--color-surface);
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #7f2e20;
+  border-color: #7f2e20;
 }
 
 .buttonNurse,
@@ -2449,6 +2462,52 @@ h2 {
   border-radius: 10px;
   display: block;
   padding: 10px;
+}
+
+.deleteAssessmentBlock {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 18px;
+}
+
+.deleteAssessmentBlock h3 {
+  color: var(--danger);
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.deleteAssessmentBlock p,
+.deleteAssessmentBlock label {
+  color: var(--color-text-body);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.deleteAssessmentBlock label {
+  font-weight: 700;
+}
+
+.deleteAssessmentBlock input:not([type="hidden"]) {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 12px;
+  color: var(--color-ink);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.deleteAssessmentBlock input:not([type="hidden"]):focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 4px rgba(162, 61, 43, 0.14);
+  outline: none;
+}
+
+.deleteAssessmentBlock .dangerButton {
+  min-height: 44px;
+  padding: 0 18px;
 }
 
 .factorList {

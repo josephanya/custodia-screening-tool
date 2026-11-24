@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { deleteAssessment } from "../../actions";
 import { NurseHeader } from "../../nurse-header";
 import { requireNurseSession } from "../../require-session";
 import {
@@ -24,6 +25,9 @@ import type {
 type AssessmentDetailPageProps = {
   params: Promise<{
     id: string;
+  }>;
+  searchParams: Promise<{
+    deleteError?: string;
   }>;
 };
 
@@ -84,9 +88,10 @@ type AssessmentDetailView = {
   missingDesignFields: string[];
 };
 
-export default async function AssessmentDetailPage({ params }: AssessmentDetailPageProps) {
+export default async function AssessmentDetailPage({ params, searchParams }: AssessmentDetailPageProps) {
   const session = await requireNurseSession();
   const { id } = await params;
+  const { deleteError } = await searchParams;
   const assessment = await getAssessmentDetailRecord(id);
 
   if (!assessment) {
@@ -244,6 +249,27 @@ export default async function AssessmentDetailPage({ params }: AssessmentDetailP
                   </div>
                 ))}
               </dl>
+              <form className="deleteAssessmentBlock" action={deleteAssessment}>
+                <input type="hidden" name="assessmentId" value={assessment.id} />
+                <h3>Delete assessment</h3>
+                <p>
+                  This permanently removes the assessment and result. Type the reference code to confirm.
+                </p>
+                <label htmlFor="delete-confirmation">Reference code</label>
+                <input
+                  id="delete-confirmation"
+                  name="confirmation"
+                  placeholder={detail.referenceCode}
+                  autoComplete="off"
+                  required
+                />
+                {deleteError === "confirmation" ? (
+                  <p className="fieldError" role="alert">Reference code did not match.</p>
+                ) : null}
+                <button className="dangerButton" type="submit">
+                  Delete assessment
+                </button>
+              </form>
             </aside>
           </div>
         </section>
