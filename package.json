@@ -37,6 +37,8 @@
     "typescript": "^5"
   },
   "overrides": {
-    "deepmerge-ts": "^8.0.1"
+    "deepmerge-ts": "^8.0.1",
+    "effect": "3.22.1",
+    "minimatch": "11.0.1"
   }
 }
